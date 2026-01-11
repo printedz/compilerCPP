@@ -7,46 +7,68 @@
     #define IS_MAC 0
 #endif
 
-std::string CodeGenerator::generate(const Program& program) {
-    std::stringstream ss;
-    const Function& func = *program.function;
+static std::string mangleFuncName(const std::string& name) {
+    if (IS_MAC) return "_" + name; else return name;
+}
 
-    std::string funcName = func.name;
-    if (IS_MAC) {
-        funcName = "_" + funcName;
-    }
+std::string CodeGenerator::generate(const Program& program) {
+    return genFunction(*program.function);
+}
+
+std::string CodeGenerator::genFunction(const Function& func) {
+    std::stringstream ss;
+    std::string funcName = mangleFuncName(func.name);
 
     ss << "    .text\n";
     ss << "    .globl " << funcName << "\n";
     ss << funcName << ":\n";
 
+    // Prologue
     ss << "    pushq %rbp\n";
     ss << "    movq %rsp, %rbp\n";
-    ss << "    subq $0, %rsp\n";
 
-    for (const auto& instr : func.instructions) {
-        if (auto* mov = dynamic_cast<const Mov*>(instr.get())) {
-            ss << "    movl " << formatOperand(mov->src.get())
-               << ", " << formatOperand(mov->dst.get()) << "\n";
-        } else if (dynamic_cast<const Ret*>(instr.get())) {
-            ss << "    movq %rbp, %rsp\n";
-            ss << "    popq %rbp\n";
-            ss << "    ret\n";
-        }
+    // Evaluate return expression into %eax
+    std::string exprAsm;
+    // func.body must be Return
+    if (auto* ret = dynamic_cast<const Return*>(func.body.get())) {
+        evalExpToEAX(*ret->expr, exprAsm);
+        ss << exprAsm;
+    } else {
+        // Should not happen with current grammar; default to 0
+        ss << "    movl $0, %eax\n";
     }
 
-    if (!IS_MAC) {
-        ss << ".section .note.GNU-stack,\"\",@progbits\n";
-    }
+    // Epilogue and return
+    ss << "    movq %rbp, %rsp\n";
+    ss << "    popq %rbp\n";
+    ss << "    ret\n";
+
+#if !IS_MAC
+    ss << ".section .note.GNU-stack,\"\",@progbits\n";
+#endif
 
     return ss.str();
 }
 
-std::string CodeGenerator::formatOperand(const Operand* op) {
-    if (auto* imm = dynamic_cast<const Imm*>(op)) {
-        return "$" + std::to_string(imm->value);
-    } else if (dynamic_cast<const Register*>(op)) {
-        return "%eax";
+int CodeGenerator::evalExpToEAX(const Exp& exp, std::string& outAsm) {
+    if (auto* c = dynamic_cast<const Constant*>(&exp)) {
+        outAsm += "    movl $" + std::to_string(c->value) + ", %eax\n";
+        return 0;
     }
-    return "UnknownOperand";
+    if (auto* u = dynamic_cast<const Unary*>(&exp)) {
+        // Evaluate inner to %eax first
+        evalExpToEAX(*u->expr, outAsm);
+        switch (u->op) {
+            case UnaryOperator::Complement:
+                outAsm += "    notl %eax\n"; // bitwise not
+                break;
+            case UnaryOperator::Negate:
+                outAsm += "    negl %eax\n"; // arithmetic negation
+                break;
+        }
+        return 0;
+    }
+    // Fallback: set 0
+    outAsm += "    movl $0, %eax\n";
+    return 0;
 }

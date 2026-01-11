@@ -5,15 +5,16 @@
 #include <vector>
 #include <memory>
 
+// Tokens (keep existing kinds used by the lexer)
 enum class TokenType {
     INT_KEYWORD,
     VOID_KEYWORD,
     RETURN_KEYWORD,
     IDENTIFIER,
     CONSTANT,
-    TILDE,
-    DECREMENT,
-    HYPHEN,
+    TILDE,      // '~' complement
+    DECREMENT,  // '--' (not used by grammar, but kept for lexer completeness)
+    HYPHEN,     // '-' negate
     OPEN_PAREN,
     CLOSE_PAREN,
     OPEN_BRACE,
@@ -26,36 +27,57 @@ struct Token {
     std::string value;
 };
 
-// AST Nodes
-struct Operand {
-    virtual ~Operand() = default;
+// ========================
+// High-level AST for grammar
+// program = Program(function_definition)
+// function_definition = Function(identifier name, statement body)
+// statement = Return(exp)
+// exp = Constant(int) | Unary(unary_operator, exp)
+// unary_operator = Complement | Negate
+// ========================
+
+// Forward decls
+struct Statement;
+struct Exp;
+
+// Unary operator kinds
+enum class UnaryOperator {
+    Complement, // '~'
+    Negate      // '-'
 };
 
-struct Imm : public Operand {
+// Expressions
+struct Exp {
+    virtual ~Exp() = default;
+};
+
+struct Constant : public Exp {
     int value;
-    explicit Imm(int val) : value(val) {}
+    explicit Constant(int v) : value(v) {}
 };
 
-struct Register : public Operand {
+struct Unary : public Exp {
+    UnaryOperator op;
+    std::unique_ptr<Exp> expr;
+    Unary(UnaryOperator o, std::unique_ptr<Exp> e) : op(o), expr(std::move(e)) {}
 };
 
-struct Instruction {
-    virtual ~Instruction() = default;
+// Statements
+struct Statement {
+    virtual ~Statement() = default;
 };
 
-struct Mov : public Instruction {
-    std::unique_ptr<Operand> src;
-    std::unique_ptr<Operand> dst;
-    Mov(std::unique_ptr<Operand> s, std::unique_ptr<Operand> d) : src(std::move(s)), dst(std::move(d)) {}
+struct Return : public Statement {
+    std::unique_ptr<Exp> expr;
+    explicit Return(std::unique_ptr<Exp> e) : expr(std::move(e)) {}
 };
 
-struct Ret : public Instruction {
-};
-
+// Function and Program
 struct Function {
     std::string name;
-    std::vector<std::unique_ptr<Instruction>> instructions;
-    Function(std::string n, std::vector<std::unique_ptr<Instruction>> instrs) : name(std::move(n)), instructions(std::move(instrs)) {}
+    std::unique_ptr<Statement> body; // single statement body per grammar
+    Function(std::string n, std::unique_ptr<Statement> b)
+        : name(std::move(n)), body(std::move(b)) {}
 };
 
 struct Program {

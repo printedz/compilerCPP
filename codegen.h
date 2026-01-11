@@ -9,7 +9,8 @@ public:
     static std::string generate(const Program& program);
 
 private:
-    static std::string formatOperand(const Operand* op);
+    static std::string genFunction(const Function& func);
+    static int evalExpToEAX(const Exp& exp, std::string& outAsm);
 };
 
 #endif //COMPILER_CODEGENERATOR_H

@@ -12,6 +12,7 @@ std::unique_ptr<Program> Parser::parseProgram() {
 }
 
 std::unique_ptr<Function> Parser::parseFunction() {
+    // Expect: int <identifier>(void) { <statement> }
     expect(TokenType::INT_KEYWORD);
 
     Token id = takeToken();
@@ -20,31 +21,63 @@ std::unique_ptr<Function> Parser::parseFunction() {
     }
 
     expect(TokenType::OPEN_PAREN);
-    if (peekToken().type == TokenType::VOID_KEYWORD) {
-        takeToken();
+    if (peekToken().type != TokenType::VOID_KEYWORD) {
+        throw std::runtime_error("Syntax error: expected 'void' in parameter list");
     }
+    takeToken(); // consume 'void'
     expect(TokenType::CLOSE_PAREN);
     expect(TokenType::OPEN_BRACE);
 
-    std::vector<std::unique_ptr<Instruction>> instructions;
-
-    // Simplified: assume only "return <const>;"
-    expect(TokenType::RETURN_KEYWORD);
-    Token constToken = takeToken();
-    if (constToken.type != TokenType::CONSTANT) {
-        throw std::runtime_error("Error: expected constant");
-    }
-    expect(TokenType::SEMICOLON);
-
-    instructions.push_back(std::make_unique<Mov>(
-        std::make_unique<Imm>(std::stoi(constToken.value)),
-        std::make_unique<Register>()
-    ));
-    instructions.push_back(std::make_unique<Ret>());
+    auto stmt = parseStatement();
 
     expect(TokenType::CLOSE_BRACE);
 
-    return std::make_unique<Function>(id.value, std::move(instructions));
+    return std::make_unique<Function>(id.value, std::move(stmt));
+}
+
+std::unique_ptr<Statement> Parser::parseStatement() {
+    // Only Return(exp); for now
+    return parseReturn();
+}
+
+std::unique_ptr<Return> Parser::parseReturn() {
+    expect(TokenType::RETURN_KEYWORD);
+    auto e = parseExp();
+    expect(TokenType::SEMICOLON);
+    return std::make_unique<Return>(std::move(e));
+}
+
+std::unique_ptr<Exp> Parser::parseExp() {
+    // Grammar: <exp> ::= <int> | <unop> <exp> | '(' <exp> ')'
+    // We implement as: unary -> primary | ('~' | '-') unary, and primary -> constant | '(' exp ')'
+    return parseUnary();
+}
+
+std::unique_ptr<Exp> Parser::parseUnary() {
+    if (peekToken().type == TokenType::TILDE) {
+        takeToken();
+        return std::make_unique<Unary>(UnaryOperator::Complement, parseUnary());
+    } else if (peekToken().type == TokenType::HYPHEN) {
+        takeToken();
+        return std::make_unique<Unary>(UnaryOperator::Negate, parseUnary());
+    }
+
+    // primary
+    Token t = peekToken();
+    if (t.type == TokenType::OPEN_PAREN) {
+        takeToken(); // '('
+        auto inner = parseExp();
+        expect(TokenType::CLOSE_PAREN);
+        return inner;
+    }
+
+    // constant
+    t = takeToken();
+    if (t.type == TokenType::CONSTANT) {
+        return std::make_unique<Constant>(std::stoi(t.value));
+    }
+
+    throw std::runtime_error("Syntax error: expected expression (constant, unary, or parenthesized)");
 }
 
 void Parser::expect(TokenType expectedType) {

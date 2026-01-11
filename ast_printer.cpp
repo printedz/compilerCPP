@@ -1,45 +1,49 @@
 #include "ast_printer.h"
 #include <sstream>
 
-std::string getIndentation(int indent) {
+static std::string indentStr(int indent) {
     std::string s;
     for (int i = 0; i < indent; ++i) s += "  ";
     return s;
 }
 
 std::string ASTPrinter::print(const Program& program) {
-    return "Program(\n" + print(*program.function, 1) + "\n)";
+    std::stringstream ss;
+    ss << "Program(\n" << print(*program.function, 1) << "\n)";
+    return ss.str();
 }
 
 std::string ASTPrinter::print(const Function& function, int indent) {
     std::stringstream ss;
-    std::string indentation = getIndentation(indent);
-    ss << indentation << "Function(\n";
-    ss << indentation << "  name=\"" << function.name << "\",\n";
-    ss << indentation << "  instructions=[\n";
-    for (const auto& instr : function.instructions) {
-        ss << print(*instr, indent + 2) << "\n";
-    }
-    ss << indentation << "  ]\n";
-    ss << indentation << ")";
+    std::string ind = indentStr(indent);
+    ss << ind << "Function(\n";
+    ss << ind << "  name=\"" << function.name << "\",\n";
+    ss << ind << "  body=\n" << print(*function.body, indent + 2) << "\n";
+    ss << ind << ")";
     return ss.str();
 }
 
-std::string ASTPrinter::print(const Instruction& instruction, int indent) {
-    std::string indentation = getIndentation(indent);
-    if (auto* mov = dynamic_cast<const Mov*>(&instruction)) {
-        return indentation + "Mov(" + printOperand(*mov->src) + ", " + printOperand(*mov->dst) + ")";
-    } else if (dynamic_cast<const Ret*>(&instruction)) {
-        return indentation + "Ret";
+std::string ASTPrinter::print(const Statement& statement, int indent) {
+    if (auto* ret = dynamic_cast<const Return*>(&statement)) {
+        std::stringstream ss;
+        std::string ind = indentStr(indent);
+        ss << ind << "Return(\n" << print(*ret->expr, indent + 1) << "\n" << ind << ")";
+        return ss.str();
     }
-    return indentation + "UnknownInstruction";
+    return indentStr(indent) + "<UnknownStatement>";
 }
 
-std::string ASTPrinter::printOperand(const Operand& operand) {
-    if (auto* imm = dynamic_cast<const Imm*>(&operand)) {
-        return "Imm(" + std::to_string(imm->value) + ")";
-    } else if (dynamic_cast<const Register*>(&operand)) {
-        return "Register";
+std::string ASTPrinter::print(const Exp& exp, int indent) {
+    if (auto* c = dynamic_cast<const Constant*>(&exp)) {
+        return indentStr(indent) + "Constant(" + std::to_string(c->value) + ")";
     }
-    return "UnknownOperand";
+    if (auto* u = dynamic_cast<const Unary*>(&exp)) {
+        std::stringstream ss;
+        std::string ind = indentStr(indent);
+        ss << ind << "Unary(";
+        ss << (u->op == UnaryOperator::Complement ? "Complement" : "Negate");
+        ss << ",\n" << print(*u->expr, indent + 1) << "\n" << ind << ")";
+        return ss.str();
+    }
+    return indentStr(indent) + "<UnknownExp>";
 }
