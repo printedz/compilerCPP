@@ -11,10 +11,7 @@ public:
     static std::string generate(const IRProgram& program);
 
 private:
-    static std::string genFunction(const Function& func);
-    static int evalExpToEAX(const Exp& exp, std::string& outAsm);
     static std::string genFunctionIR(const IRFunction& func);
 };
 
 #endif //COMPILER_CODEGENERATOR_H
-

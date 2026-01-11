@@ -7,49 +7,77 @@
 #include <utility>
 
 /*
-Grammar:
+Assembly AST Grammar:
 
 program = Program(function_definition)
-function_definition = Function(identifier, instruction* body)
-instruction = Return(val) | Unary(unary_operator, val src, val dst)
-val = Constant(int) | Var(identifier)
-unary_operator = Complement | Negate
+function_definition = Function(identifier name, instruction* instructions)
+instruction = Mov(operand src, operand dst)
+            | Unary(unary_operator, operand)
+            | AllocateStack(int)
+            | Ret
+unary_operator = Neg | Not
+operand = Imm(int) | Reg(reg) | Pseudo(identifier) | Stack(int)
+reg = AX | R10
 */
 
 enum class IRUnaryOperator {
-    Complement,
-    Negate
+    Neg,
+    Not
 };
 
-struct IRVal {
-    virtual ~IRVal() = default;
+enum class IRRegister {
+    AX,
+    R10
 };
 
-struct IRConstant : public IRVal {
+struct IROperand {
+    virtual ~IROperand() = default;
+};
+
+struct IRImm : public IROperand {
     int value;
-    explicit IRConstant(int v) : value(v) {}
+    explicit IRImm(int v) : value(v) {}
 };
 
-struct IRVar : public IRVal {
+struct IRReg : public IROperand {
+    IRRegister reg;
+    explicit IRReg(IRRegister r) : reg(r) {}
+};
+
+struct IRPseudo : public IROperand {
     std::string name;
-    explicit IRVar(std::string n) : name(std::move(n)) {}
+    explicit IRPseudo(std::string n) : name(std::move(n)) {}
+};
+
+struct IRStack : public IROperand {
+    int offset;
+    explicit IRStack(int o) : offset(o) {}
 };
 
 struct IRInstruction {
     virtual ~IRInstruction() = default;
 };
 
-struct IRReturn : public IRInstruction {
-    std::unique_ptr<IRVal> value;
-    explicit IRReturn(std::unique_ptr<IRVal> v) : value(std::move(v)) {}
+struct IRMov : public IRInstruction {
+    std::unique_ptr<IROperand> src;
+    std::unique_ptr<IROperand> dst;
+    IRMov(std::unique_ptr<IROperand> s, std::unique_ptr<IROperand> d)
+        : src(std::move(s)), dst(std::move(d)) {}
 };
 
 struct IRUnary : public IRInstruction {
     IRUnaryOperator op;
-    std::unique_ptr<IRVal> src;
-    std::unique_ptr<IRVal> dst;
-    IRUnary(IRUnaryOperator o, std::unique_ptr<IRVal> s, std::unique_ptr<IRVal> d)
-        : op(o), src(std::move(s)), dst(std::move(d)) {}
+    std::unique_ptr<IROperand> operand;
+    IRUnary(IRUnaryOperator o, std::unique_ptr<IROperand> e)
+        : op(o), operand(std::move(e)) {}
+};
+
+struct IRAllocateStack : public IRInstruction {
+    int amount;
+    explicit IRAllocateStack(int a) : amount(a) {}
+};
+
+struct IRRet : public IRInstruction {
 };
 
 struct IRFunction {
@@ -65,4 +93,3 @@ struct IRProgram {
 };
 
 #endif // COMPILER_IR_H
-

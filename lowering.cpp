@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <unordered_set>
 #include "lowering.h"
 
 // Helper to generate fresh temporary variable names: t0, t1, ...
@@ -11,27 +12,32 @@ namespace {
         return "t" + std::to_string(counter++);
     }
 
-    // Lower an Exp to an IRVal, appending IR instructions as needed.
-    static std::unique_ptr<IRVal> emitTacky(const Exp& e, std::vector<std::unique_ptr<IRInstruction>>& instructions) {
+    // Lower an Exp to an assembly operand, appending instructions as needed.
+    static std::unique_ptr<IROperand> emitTacky(
+        const Exp& e,
+        std::vector<std::unique_ptr<IRInstruction>>& instructions,
+        std::unordered_set<std::string>& pseudos) {
         if (auto c = dynamic_cast<const Constant*>(&e)) {
-            return std::make_unique<IRConstant>(c->value);
+            return std::make_unique<IRImm>(c->value);
         }
         if (auto u = dynamic_cast<const Unary*>(&e)) {
-            // src = emit_tacky(inner, instructions)
-            auto srcVal = emitTacky(*u->expr, instructions);
-            // dst_name = make_temporary(); dst = Var(dst_name)
+            // src = emit(inner)
+            auto srcVal = emitTacky(*u->expr, instructions, pseudos);
+            // dst_name = make_temporary(); dst = Pseudo(dst_name)
             std::string tmpName = freshTempName();
-            auto dstVar = std::make_unique<IRVar>(tmpName);
-            auto dstVarRef = std::make_unique<IRVar>(tmpName);
-            // tacky_op = convert_unop(op)
-            IRUnaryOperator op = (u->op == UnaryOperator::Complement) ? IRUnaryOperator::Complement : IRUnaryOperator::Negate;
-            // instructions.append(Unary(tacky_op, src, dst))
-            instructions.push_back(std::make_unique<IRUnary>(op, std::move(srcVal), std::move(dstVar)));
-            // return dst
-            return dstVarRef;
+            pseudos.insert(tmpName);
+            auto dstVar = std::make_unique<IRPseudo>(tmpName);
+            auto dstVarRef = std::make_unique<IRPseudo>(tmpName);
+            // mov src, dst
+            instructions.push_back(std::make_unique<IRMov>(std::move(srcVal), std::move(dstVar)));
+            // unary op in-place on dst
+            IRUnaryOperator op = (u->op == UnaryOperator::Complement) ? IRUnaryOperator::Not : IRUnaryOperator::Neg;
+            instructions.push_back(std::make_unique<IRUnary>(op, std::move(dstVarRef)));
+            // return dst (fresh operand)
+            return std::make_unique<IRPseudo>(tmpName);
         }
         // Fallback: constant 0 for unsupported expressions
-        return std::make_unique<IRConstant>(0);
+        return std::make_unique<IRImm>(0);
     }
 }
 
@@ -40,18 +46,28 @@ std::unique_ptr<IRProgram> Lowering::toIR(const Program& program) {
     const Function& func = *program.function;
 
     std::vector<std::unique_ptr<IRInstruction>> body;
+    std::unordered_set<std::string> pseudos;
 
     // Lower the Return statement body. The existing grammar guarantees a single Return.
     if (auto ret = dynamic_cast<const Return*>(func.body.get())) {
         // Lower expression to IR, emitting instructions into body
-        auto retVal = emitTacky(*ret->expr, body);
-        body.push_back(std::make_unique<IRReturn>(std::move(retVal)));
+        auto retVal = emitTacky(*ret->expr, body, pseudos);
+        body.push_back(std::make_unique<IRMov>(std::move(retVal), std::make_unique<IRReg>(IRRegister::AX)));
+        body.push_back(std::make_unique<IRRet>());
     } else {
         // If no return, default return 0
-        body.push_back(std::make_unique<IRReturn>(std::make_unique<IRConstant>(0)));
+        body.push_back(std::make_unique<IRMov>(std::make_unique<IRImm>(0), std::make_unique<IRReg>(IRRegister::AX)));
+        body.push_back(std::make_unique<IRRet>());
+    }
+
+    int stackSize = static_cast<int>(pseudos.size()) * 4;
+    if (stackSize % 16 != 0) {
+        stackSize += (16 - (stackSize % 16));
+    }
+    if (stackSize > 0) {
+        body.insert(body.begin(), std::make_unique<IRAllocateStack>(stackSize));
     }
 
     auto irFunc = std::make_unique<IRFunction>(func.name, std::move(body));
     return std::make_unique<IRProgram>(std::move(irFunc));
 }
-

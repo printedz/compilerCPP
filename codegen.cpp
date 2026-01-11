@@ -1,4 +1,5 @@
 #include "codegen.h"
+#include "lowering.h"
 #include <sstream>
 #include <unordered_map>
 
@@ -17,127 +18,74 @@ std::string CodeGenerator::generate(const IRProgram& program) {
 }
 
 std::string CodeGenerator::generate(const Program& program) {
-    return genFunction(*program.function);
+    auto ir = Lowering::toIR(program);
+    return generate(*ir);
 }
 
-std::string CodeGenerator::genFunction(const Function& func) {
-    std::stringstream ss;
-    std::string funcName = mangleFuncName(func.name);
-
-    ss << "    .text\n";
-    ss << "    .globl " << funcName << "\n";
-    ss << funcName << ":\n";
-
-    // Prologue
-    ss << "    pushq %rbp\n";
-    ss << "    movq %rsp, %rbp\n";
-
-    // Evaluate return expression into %eax
-    std::string exprAsm;
-    // func.body must be Return
-    if (auto* ret = dynamic_cast<const Return*>(func.body.get())) {
-        evalExpToEAX(*ret->expr, exprAsm);
-        ss << exprAsm;
-    } else {
-        // Should not happen with current grammar; default to 0
-        ss << "    movl $0, %eax\n";
+static const char* regToAsm32(IRRegister reg) {
+    switch (reg) {
+        case IRRegister::AX: return "%eax";
+        case IRRegister::R10: return "%r10d";
     }
-
-    // Epilogue and return
-    ss << "    movq %rbp, %rsp\n";
-    ss << "    popq %rbp\n";
-    ss << "    ret\n";
-
-#if !IS_MAC
-    ss << ".section .note.GNU-stack,\"\",@progbits\n";
-#endif
-
-    return ss.str();
+    return "%eax";
 }
 
-int CodeGenerator::evalExpToEAX(const Exp& exp, std::string& outAsm) {
-    if (auto* c = dynamic_cast<const Constant*>(&exp)) {
-        outAsm += "    movl $" + std::to_string(c->value) + ", %eax\n";
-        return 0;
+static std::string formatOperand(
+    const IROperand& op,
+    const std::unordered_map<std::string, int>& pseudoOffsets) {
+    if (auto* imm = dynamic_cast<const IRImm*>(&op)) {
+        return "$" + std::to_string(imm->value);
     }
-    if (auto* u = dynamic_cast<const Unary*>(&exp)) {
-        // Evaluate inner to %eax first
-        evalExpToEAX(*u->expr, outAsm);
-        switch (u->op) {
-            case UnaryOperator::Complement:
-                outAsm += "    notl %eax\n"; // bitwise not
-                break;
-            case UnaryOperator::Negate:
-                outAsm += "    negl %eax\n"; // arithmetic negation
-                break;
-        }
-        return 0;
+    if (auto* reg = dynamic_cast<const IRReg*>(&op)) {
+        return regToAsm32(reg->reg);
     }
-    // Fallback: set 0
-    outAsm += "    movl $0, %eax\n";
-    return 0;
-}
-static int loadValToEAX(const IRVal& val, std::string& outAsm, const std::unordered_map<std::string, int>& varOffsets) {
-    if (auto* c = dynamic_cast<const IRConstant*>(&val)) {
-        outAsm += "    movl $" + std::to_string(c->value) + ", %eax\n";
-        return 0;
+    if (auto* pseudo = dynamic_cast<const IRPseudo*>(&op)) {
+        auto it = pseudoOffsets.find(pseudo->name);
+        int offset = (it == pseudoOffsets.end()) ? 0 : it->second;
+        return std::to_string(offset) + "(%rbp)";
     }
-    if (auto* v = dynamic_cast<const IRVar*>(&val)) {
-        auto it = varOffsets.find(v->name);
-        if (it == varOffsets.end()) {
-            // Undefined variable; default to 0
-            outAsm += "    movl $0, %eax\n";
-            return 0;
-        }
-        int offset = it->second;
-        outAsm += "    movl " + std::to_string(offset) + "(%rbp), %eax\n";
-        return 0;
+    if (auto* stack = dynamic_cast<const IRStack*>(&op)) {
+        return std::to_string(stack->offset) + "(%rbp)";
     }
-    // Unknown value type
-    outAsm += "    movl $0, %eax\n";
-    return 0;
+    return "0(%rbp)";
 }
 
-static void storeEAXToVar(const IRVar& var, std::string& outAsm, const std::unordered_map<std::string, int>& varOffsets) {
-    auto it = varOffsets.find(var.name);
-    if (it == varOffsets.end()) {
-        // No storage allocated; ignore
-        return;
-    }
-    int offset = it->second;
-    outAsm += "    movl %eax, " + std::to_string(offset) + "(%rbp)\n";
+static bool isMemoryOperand(const IROperand& op) {
+    return dynamic_cast<const IRPseudo*>(&op) != nullptr
+        || dynamic_cast<const IRStack*>(&op) != nullptr;
 }
 
 std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
     std::stringstream ss;
     std::string funcName = mangleFuncName(func.name);
 
-    // First pass: collect variables from IRVar occurrences to allocate stack slots.
-    // We assign each unique variable name a 4-byte slot at negative offsets from %rbp.
-    std::unordered_map<std::string, int> varOffsets; // name -> offset
+    // First pass: collect pseudos to allocate stack slots.
+    // We assign each unique pseudo name a 4-byte slot at negative offsets from %rbp.
+    std::unordered_map<std::string, int> pseudoOffsets; // name -> offset
     int nextOffset = -4; // start at -4(%rbp), grow negatively
-    auto ensureVar = [&](const IRVal* val) {
-        if (auto* v = dynamic_cast<const IRVar*>(val)) {
-            if (!varOffsets.count(v->name)) {
-                varOffsets[v->name] = nextOffset;
+    auto ensurePseudo = [&](const IROperand* op) {
+        if (auto* p = dynamic_cast<const IRPseudo*>(op)) {
+            if (!pseudoOffsets.count(p->name)) {
+                pseudoOffsets[p->name] = nextOffset;
                 nextOffset -= 4;
             }
         }
     };
 
+    bool hasAllocate = false;
     for (const auto& instPtr : func.body) {
-        if (auto* u = dynamic_cast<const IRUnary*>(instPtr.get())) {
-            ensureVar(u->src.get());
-            ensureVar(u->dst.get());
-        } else if (auto* r = dynamic_cast<const IRReturn*>(instPtr.get())) {
-            ensureVar(r->value.get());
+        if (auto* m = dynamic_cast<const IRMov*>(instPtr.get())) {
+            ensurePseudo(m->src.get());
+            ensurePseudo(m->dst.get());
+        } else if (auto* u = dynamic_cast<const IRUnary*>(instPtr.get())) {
+            ensurePseudo(u->operand.get());
+        } else if (dynamic_cast<const IRAllocateStack*>(instPtr.get())) {
+            hasAllocate = true;
         }
     }
 
-    int frameSize = -nextOffset - 4; // round up to multiple of 16 later
+    int frameSize = -nextOffset - 4;
     if (frameSize < 0) frameSize = 0;
-
-    // Align stack frame size to 16 bytes for System V ABI where needed
     if (frameSize % 16 != 0) {
         frameSize += (16 - (frameSize % 16));
     }
@@ -149,38 +97,33 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
     // Prologue
     ss << "    pushq %rbp\n";
     ss << "    movq %rsp, %rbp\n";
-    if (frameSize > 0) {
+    if (!hasAllocate && frameSize > 0) {
         ss << "    subq $" << frameSize << ", %rsp\n";
     }
 
     // Body
     for (const auto& instPtr : func.body) {
-        if (auto* u = dynamic_cast<const IRUnary*>(instPtr.get())) {
-            // Load src to %eax
-            std::string asmChunk;
-            loadValToEAX(*u->src, asmChunk, varOffsets);
-            // Apply op
-            switch (u->op) {
-                case IRUnaryOperator::Complement:
-                    asmChunk += "    notl %eax\n";
-                    break;
-                case IRUnaryOperator::Negate:
-                    asmChunk += "    negl %eax\n";
-                    break;
+        if (auto* m = dynamic_cast<const IRMov*>(instPtr.get())) {
+            std::string src = formatOperand(*m->src, pseudoOffsets);
+            std::string dst = formatOperand(*m->dst, pseudoOffsets);
+            if (isMemoryOperand(*m->src) && isMemoryOperand(*m->dst)) {
+                ss << "    movl " << src << ", %r10d\n";
+                ss << "    movl %r10d, " << dst << "\n";
+            } else {
+                ss << "    movl " << src << ", " << dst << "\n";
             }
-            // Store to dst (must be a variable)
-            if (auto* dstVar = dynamic_cast<const IRVar*>(u->dst.get())) {
-                storeEAXToVar(*dstVar, asmChunk, varOffsets);
+        } else if (auto* u = dynamic_cast<const IRUnary*>(instPtr.get())) {
+            const char* op = (u->op == IRUnaryOperator::Neg) ? "negl" : "notl";
+            ss << "    " << op << " " << formatOperand(*u->operand, pseudoOffsets) << "\n";
+        } else if (auto* a = dynamic_cast<const IRAllocateStack*>(instPtr.get())) {
+            if (a->amount > 0) {
+                int amount = a->amount;
+                if (frameSize > amount) {
+                    amount = frameSize;
+                }
+                ss << "    subq $" << amount << ", %rsp\n";
             }
-            ss << asmChunk;
-        } else if (auto* r = dynamic_cast<const IRReturn*>(instPtr.get())) {
-            std::string asmChunk;
-            loadValToEAX(*r->value, asmChunk, varOffsets);
-            ss << asmChunk;
-            // Epilogue and return
-            if (frameSize > 0) {
-                ss << "    addq $" << frameSize << ", %rsp\n";
-            }
+        } else if (dynamic_cast<const IRRet*>(instPtr.get())) {
             ss << "    movq %rbp, %rsp\n";
             ss << "    popq %rbp\n";
             ss << "    ret\n";
@@ -193,9 +136,6 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
 
     // If no explicit return, default to 0
     ss << "    movl $0, %eax\n";
-    if (frameSize > 0) {
-        ss << "    addq $" << frameSize << ", %rsp\n";
-    }
     ss << "    movq %rbp, %rsp\n";
     ss << "    popq %rbp\n";
     ss << "    ret\n";
@@ -205,4 +145,3 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
 
     return ss.str();
 }
-

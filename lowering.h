@@ -7,7 +7,7 @@
 
 class Lowering {
 public:
-    // Lowers the high-level AST Program to the IR Program.
+    // Lowers the high-level AST Program to the assembly AST Program.
     static std::unique_ptr<IRProgram> toIR(const Program& program);
 };
 
