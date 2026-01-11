@@ -1,4 +1,0 @@
-Target dependency graph (2 targets)
-Target 'compiler' in project 'compiler'
-➜ Explicit dependency on target 'ZERO_CHECK' in project 'compiler'
-Target 'ZERO_CHECK' in project 'compiler' (no dependencies)
