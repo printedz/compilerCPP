@@ -18,6 +18,7 @@ void printUsage() {
     std::cout << "  --parse    Detenerse después del análisis sintáctico\n";
     std::cout << "  --codegen  Detenerse después de la generación de código\n";
     std::cout << "  --ir       Mostrar IR intermedio y detenerse\n";
+    std::cout << "  --tacky    Ejecutar etapa IR y detenerse\n";
 }
 
 std::string readFile(const std::string& path) {
@@ -74,6 +75,7 @@ int main(int argc, char* argv[]) {
     bool parseOnly = false;
     bool codegenOnly = false;
     bool irOnly = false;
+    bool tackyOnly = false;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -81,6 +83,7 @@ int main(int argc, char* argv[]) {
         else if (arg == "--parse") parseOnly = true;
         else if (arg == "--codegen") codegenOnly = true;
         else if (arg == "--ir") irOnly = true;
+        else if (arg == "--tacky") tackyOnly = true;
         else if (arg.starts_with("-")) {
             std::cerr << "Error: Opción desconocida " << arg << std::endl;
             return 1;
@@ -110,7 +113,7 @@ int main(int argc, char* argv[]) {
         Parser parser(tokens);
         auto ast = parser.parseProgram();
 
-        if (irOnly) {
+        if (irOnly || tackyOnly) {
             auto ir = Lowering::toIR(*ast);
             std::cout << IRPrinter::print(*ir) << std::endl;
             return 0;
