@@ -1,60 +1,82 @@
-#include <sstream>
 #include "ir_printer.h"
 
-namespace {
-static std::string indentStr(int indent) { return std::string(indent * 2, ' '); }
+#include <iostream>
+#include <sstream>
+
+static const char* toString(IRUnaryOperator op) {
+    switch (op) {
+        case IRUnaryOperator::Negate: return "-";
+        case IRUnaryOperator::Complement: return "~";
+    }
+    return "?";
 }
 
 std::string IRPrinter::print(const IRProgram& program) {
-    std::ostringstream os;
-    os << "Program(\n"
-       << indentStr(1) << print(*program.function, 1) << "\n"
-       << ")";
-    return os.str();
+    std::ostringstream oss;
+    IRPrinter printer(oss);
+    printer.emit(program);
+    return oss.str();
 }
 
-std::string IRPrinter::print(const IRFunction& func, int indent) {
-    std::ostringstream os;
-    std::string ind = indentStr(indent);
-    os << "Function(\n";
-    os << ind << "  name=\"" << func.name << "\",\n";
-    os << ind << "  body=[\n";
-    for (size_t i = 0; i < func.body.size(); ++i) {
-        os << indentStr(indent + 2) << print(*func.body[i], indent + 2);
-        if (i + 1 < func.body.size()) {
-            os << ",";
-        }
-        os << "\n";
-    }
-    os << ind << "  ]\n";
-    os << ind << ")";
-    return os.str();
-}
-
-std::string IRPrinter::print(const IRInstruction& instr, int /*indent*/) {
-    std::ostringstream os;
-
-    if (auto ret = dynamic_cast<const IRReturn*>(&instr)) {
-        os << "Return(" << print(*ret->value, 0) << ")";
-    } else if (auto unary = dynamic_cast<const IRUnary*>(&instr)) {
-        const char* opName = (unary->op == IRUnaryOperator::Complement) ? "Complement" : "Negate";
-        os << "Unary(" << opName
-           << ", src=" << print(*unary->src, 0)
-           << ", dst=" << print(*unary->dst, 0)
-           << ")";
+void IRPrinter::emit(const IRProgram& program) const {
+    if (program.function) {
+        emit(*program.function);
     } else {
-        os << "<UnknownIRInstruction>";
-    }
-
-    return os.str();
-}
-
-std::string IRPrinter::print(const IRVal& val, int /*indent*/) {
-    if (auto c = dynamic_cast<const IRConstant*>(&val)) {
-        return "Constant(" + std::to_string(c->value) + ")";
-    } else if (auto v = dynamic_cast<const IRVar*>(&val)) {
-        return "Var(" + v->name + ")";
-    } else {
-        return "<UnknownIRVal>";
+        out << "<empty program>\n";
     }
 }
+
+void IRPrinter::emit(const IRFunction& fn) const {
+    out << "func " << fn.name << "() {\n";
+    for (const auto& inst : fn.body) {
+        emit(*inst);
+    }
+    out << "}\n";
+}
+
+void IRPrinter::emit(const IRInstruction& inst) const {
+    if (auto u = dynamic_cast<const IRUnary*>(&inst)) {
+        emit(*u);
+        return;
+    }
+    if (auto r = dynamic_cast<const IRReturn*>(&inst)) {
+        emit(*r);
+        return;
+    }
+    out << "  <unknown inst>\n";
+}
+
+void IRPrinter::emit(const IRUnary& u) const {
+    out << "  ";
+    // dst = op src
+    emit(*u.dst);
+    out << " = " << toString(u.op) << " ";
+    emit(*u.src);
+    out << "\n";
+}
+
+void IRPrinter::emit(const IRReturn& r) const {
+    out << "  return ";
+    emit(*r.value);
+    out << "\n";
+}
+
+void IRPrinter::emit(const IRVal& v) const {
+    if (auto c = dynamic_cast<const IRConstant*>(&v)) {
+        emit(*c);
+        return;
+    }
+    if (auto var = dynamic_cast<const IRVar*>(&v)) {
+        emit(*var);
+        return;
+    }
+    out << "?";
+}
+void IRPrinter::emit(const IRConstant& c) const {
+    out << c.value;
+}
+
+void IRPrinter::emit(const IRVar& v) const {
+    out << v.name;
+}
+
