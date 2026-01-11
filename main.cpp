@@ -37,11 +37,7 @@ void writeFile(const std::string& path, const std::string& content) {
     file << content;
 }
 
-void createExecutable(const std::string& sourceFile) {
-    std::filesystem::path p(sourceFile);
-    std::string baseName = p.stem().string();
-    std::string assemblyFile = baseName + ".s";
-    std::string outputFile = baseName;
+void createExecutable(const std::string& assemblyFile, const std::string& outputFile) {
 
 #if defined(__APPLE__)
     std::string command = "gcc -arch x86_64 " + assemblyFile + " -o " + outputFile;
@@ -132,11 +128,14 @@ int main(int argc, char* argv[]) {
         }
 
         std::filesystem::path p(fileName);
-        std::string assemblyFileName = p.stem().string() + ".s";
+        std::string baseName = p.stem().string();
+        std::filesystem::path outDir = p.parent_path();
+        std::string assemblyFileName = (outDir / (baseName + ".s")).string();
+        std::string outputFileName = (outDir / baseName).string();
         writeFile(assemblyFileName, assembly);
 
         // 4. Linker
-        createExecutable(fileName);
+        createExecutable(assemblyFileName, outputFileName);
 
     } catch (const std::exception& e) {
         std::cerr << "Error durante la compilación: " << e.what() << std::endl;
