@@ -1,4 +1,4 @@
 dependencies: \
-  /Users/alejandroregidornova/CLionProjects/compiler/parser.cpp \
-  /Users/alejandroregidornova/CLionProjects/compiler/parser.h \
-  /Users/alejandroregidornova/CLionProjects/compiler/ast.h
+  /Users/alejandroregidornova/Documents/compilerCPP/parser.cpp \
+  /Users/alejandroregidornova/Documents/compilerCPP/parser.h \
+  /Users/alejandroregidornova/Documents/compilerCPP/ast.h

@@ -8,6 +8,8 @@
 #include "parser.h"
 #include "codegen.h"
 #include "ast_printer.h"
+#include "ir_printer.h"
+#include "lowering.h"
 
 void printUsage() {
     std::cout << "Uso: compiler [opciones] <archivo.c>\n";
@@ -15,6 +17,7 @@ void printUsage() {
     std::cout << "  --lex      Detenerse después del análisis léxico\n";
     std::cout << "  --parse    Detenerse después del análisis sintáctico\n";
     std::cout << "  --codegen  Detenerse después de la generación de código\n";
+    std::cout << "  --ir       Mostrar IR intermedio y detenerse\n";
 }
 
 std::string readFile(const std::string& path) {
@@ -70,12 +73,14 @@ int main(int argc, char* argv[]) {
     bool lexOnly = false;
     bool parseOnly = false;
     bool codegenOnly = false;
+    bool irOnly = false;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
         if (arg == "--lex") lexOnly = true;
         else if (arg == "--parse") parseOnly = true;
         else if (arg == "--codegen") codegenOnly = true;
+        else if (arg == "--ir") irOnly = true;
         else if (arg.starts_with("-")) {
             std::cerr << "Error: Opción desconocida " << arg << std::endl;
             return 1;
@@ -104,6 +109,12 @@ int main(int argc, char* argv[]) {
         // 2. Fase de Parser
         Parser parser(tokens);
         auto ast = parser.parseProgram();
+
+        if (irOnly) {
+            auto ir = Lowering::toIR(*ast);
+            std::cout << IRPrinter::print(*ir) << std::endl;
+            return 0;
+        }
 
         if (parseOnly) {
             std::cout << ASTPrinter::print(*ast) << std::endl;

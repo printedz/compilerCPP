@@ -1,4 +1,4 @@
-# Install script for directory: /Users/alejandroregidornova/CLionProjects/compiler
+# Install script for directory: /Users/alejandroregidornova/Documents/compilerCPP
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -37,12 +37,12 @@ if(NOT DEFINED CMAKE_OBJDUMP)
   set(CMAKE_OBJDUMP "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/objdump")
 endif()
 
-set(CMAKE_BINARY_DIR "/Users/alejandroregidornova/CLionProjects/compiler/build")
+set(CMAKE_BINARY_DIR "/Users/alejandroregidornova/Documents/compilerCPP/build")
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/Users/alejandroregidornova/CLionProjects/compiler/build/install_local_manifest.txt"
+  file(WRITE "/Users/alejandroregidornova/Documents/compilerCPP/build/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
 if(CMAKE_INSTALL_COMPONENT)
@@ -58,6 +58,6 @@ else()
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "/Users/alejandroregidornova/CLionProjects/compiler/build/${CMAKE_INSTALL_MANIFEST}"
+  file(WRITE "/Users/alejandroregidornova/Documents/compilerCPP/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

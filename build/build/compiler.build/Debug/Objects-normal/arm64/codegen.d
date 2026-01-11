@@ -1,4 +1,5 @@
 dependencies: \
-  /Users/alejandroregidornova/CLionProjects/compiler/codegen.cpp \
-  /Users/alejandroregidornova/CLionProjects/compiler/codegen.h \
-  /Users/alejandroregidornova/CLionProjects/compiler/ast.h
+  /Users/alejandroregidornova/Documents/compilerCPP/codegen.cpp \
+  /Users/alejandroregidornova/Documents/compilerCPP/codegen.h \
+  /Users/alejandroregidornova/Documents/compilerCPP/ast.h \
+  /Users/alejandroregidornova/Documents/compilerCPP/ir.h

@@ -1,5 +1,7 @@
-/Users/alejandroregidornova/CLionProjects/compiler/build/build/compiler.build/Debug/Objects-normal/arm64/ast_printer.o
-/Users/alejandroregidornova/CLionProjects/compiler/build/build/compiler.build/Debug/Objects-normal/arm64/codegen.o
-/Users/alejandroregidornova/CLionProjects/compiler/build/build/compiler.build/Debug/Objects-normal/arm64/lexer.o
-/Users/alejandroregidornova/CLionProjects/compiler/build/build/compiler.build/Debug/Objects-normal/arm64/main.o
-/Users/alejandroregidornova/CLionProjects/compiler/build/build/compiler.build/Debug/Objects-normal/arm64/parser.o
+/Users/alejandroregidornova/Documents/compilerCPP/build/build/compiler.build/Debug/Objects-normal/arm64/ast_printer.o
+/Users/alejandroregidornova/Documents/compilerCPP/build/build/compiler.build/Debug/Objects-normal/arm64/codegen.o
+/Users/alejandroregidornova/Documents/compilerCPP/build/build/compiler.build/Debug/Objects-normal/arm64/ir_printer.o
+/Users/alejandroregidornova/Documents/compilerCPP/build/build/compiler.build/Debug/Objects-normal/arm64/lexer.o
+/Users/alejandroregidornova/Documents/compilerCPP/build/build/compiler.build/Debug/Objects-normal/arm64/lowering.o
+/Users/alejandroregidornova/Documents/compilerCPP/build/build/compiler.build/Debug/Objects-normal/arm64/main.o
+/Users/alejandroregidornova/Documents/compilerCPP/build/build/compiler.build/Debug/Objects-normal/arm64/parser.o

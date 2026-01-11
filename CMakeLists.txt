@@ -13,4 +13,9 @@ add_executable(compiler
         lexer.h 
         parser.h 
         codegen.h 
-        ast_printer.h)
+        ast_printer.h
+        ir.h
+        ir_printer.cpp
+        ir_printer.h
+        lowering.cpp
+        lowering.h)

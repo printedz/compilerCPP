@@ -7,119 +7,129 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		27F55CD4538E1195EA0E4385 /* ALL_BUILD */ = {
+		1CC5D815784702CE843305BB /* ZERO_CHECK */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 09EBF076061A4D8AA78B248D /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildConfigurationList = CD4E2AE3557946EBB650C2FF /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
 			buildPhases = (
-				E100F3E90940EFAAB39C92B0 /* Generate CMakeFiles/ALL_BUILD */,
-			);
-			dependencies = (
-				852A5AEFC169487281C4061B /* PBXTargetDependency */,
-				937ECE26584E46DBB0E79155 /* PBXTargetDependency */,
-			);
-			name = ALL_BUILD;
-			productName = ALL_BUILD;
-		};
-		6E7422BD1817DCCB105AA055 /* ZERO_CHECK */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 22FEA23AA09949CAB578F750 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
-			buildPhases = (
-				453650647D39294DDBFEF9E2 /* Generate CMakeFiles/ZERO_CHECK */,
+				3E9AE57FB8380436E62CFFFD /* Generate CMakeFiles/ZERO_CHECK */,
 			);
 			dependencies = (
 			);
 			name = ZERO_CHECK;
 			productName = ZERO_CHECK;
 		};
+		7F4646D0F836D34249CDF3FB /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 428922267D814AE0835AE962 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				67B8E47479D7DCA3050F48FC /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				CD9687A3A1B646D3832E76BF /* PBXTargetDependency */,
+				984A9E5977264895A70F70F5 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		146B63F2F9294793B6DDC17E /* /Users/alejandroregidornova/CLionProjects/compiler/parser.cpp */ = {isa = PBXBuildFile; fileRef = 558481657A754653B6492443 /* /Users/alejandroregidornova/CLionProjects/compiler/parser.cpp */; };
-		20AC4933AF384E34B2F21EC5 /* /Users/alejandroregidornova/CLionProjects/compiler/parser.h */ = {isa = PBXBuildFile; fileRef = E518075496CC412192370AF7 /* /Users/alejandroregidornova/CLionProjects/compiler/parser.h */; };
-		5C7A55A87B8F4D2DA3A09F4B /* /Users/alejandroregidornova/CLionProjects/compiler/ast.h */ = {isa = PBXBuildFile; fileRef = F52340FA0C9247D9BB7E4D02 /* /Users/alejandroregidornova/CLionProjects/compiler/ast.h */; };
-		87DBDF52CE7845F9A455F0CE /* /Users/alejandroregidornova/CLionProjects/compiler/ast_printer.h */ = {isa = PBXBuildFile; fileRef = F8B9E213D20D44E19D99B08C /* /Users/alejandroregidornova/CLionProjects/compiler/ast_printer.h */; };
-		97E120F8244E4B34B241BD30 /* /Users/alejandroregidornova/CLionProjects/compiler/lexer.h */ = {isa = PBXBuildFile; fileRef = B11CEB8F0AB44DBF8EF25898 /* /Users/alejandroregidornova/CLionProjects/compiler/lexer.h */; };
-		B23AC58E414E41A5A93C8FE2 /* /Users/alejandroregidornova/CLionProjects/compiler/main.cpp */ = {isa = PBXBuildFile; fileRef = 428F3122FAA44CB8A78C8D4B /* /Users/alejandroregidornova/CLionProjects/compiler/main.cpp */; };
-		D7B23BF3846F41988314D909 /* /Users/alejandroregidornova/CLionProjects/compiler/codegen.h */ = {isa = PBXBuildFile; fileRef = 798C274992C84FB38AC868BF /* /Users/alejandroregidornova/CLionProjects/compiler/codegen.h */; };
-		DC691B0A904440918CB65668 /* /Users/alejandroregidornova/CLionProjects/compiler/lexer.cpp */ = {isa = PBXBuildFile; fileRef = A6E6EA2B2E604462ACA618F2 /* /Users/alejandroregidornova/CLionProjects/compiler/lexer.cpp */; };
-		DE0C242B60894E2F8D93D757 /* /Users/alejandroregidornova/CLionProjects/compiler/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 69B245DF68514C5695187BE5 /* /Users/alejandroregidornova/CLionProjects/compiler/CMakeLists.txt */; };
-		F085B0F9D1E541C7894AEF73 /* /Users/alejandroregidornova/CLionProjects/compiler/ast_printer.cpp */ = {isa = PBXBuildFile; fileRef = F6134FEB694F4992BC2E6BC9 /* /Users/alejandroregidornova/CLionProjects/compiler/ast_printer.cpp */; };
-		FB6D849073FC4447ABDBAAF1 /* /Users/alejandroregidornova/CLionProjects/compiler/codegen.cpp */ = {isa = PBXBuildFile; fileRef = 7A05FEFAAB684B1B893913D5 /* /Users/alejandroregidornova/CLionProjects/compiler/codegen.cpp */; };
+		036C3BB266E346F1A39286A3 /* /Users/alejandroregidornova/Documents/compilerCPP/ir_printer.h */ = {isa = PBXBuildFile; fileRef = 6F671E333A134205B32C9F9F /* /Users/alejandroregidornova/Documents/compilerCPP/ir_printer.h */; };
+		03B19067B32C4A069A986F76 /* /Users/alejandroregidornova/Documents/compilerCPP/main.cpp */ = {isa = PBXBuildFile; fileRef = 7FD1638EFF1542609B70DDE2 /* /Users/alejandroregidornova/Documents/compilerCPP/main.cpp */; };
+		2B0B1A19A3A74CC6A0E44903 /* /Users/alejandroregidornova/Documents/compilerCPP/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 88F2B92A6CDC4E7CBE2714BD /* /Users/alejandroregidornova/Documents/compilerCPP/CMakeLists.txt */; };
+		356944520562430BAB4AB27E /* /Users/alejandroregidornova/Documents/compilerCPP/lowering.cpp */ = {isa = PBXBuildFile; fileRef = B6AA3F750CAC426788DE7334 /* /Users/alejandroregidornova/Documents/compilerCPP/lowering.cpp */; };
+		36DAB6859AE04AC4A712A5C2 /* /Users/alejandroregidornova/Documents/compilerCPP/ast_printer.h */ = {isa = PBXBuildFile; fileRef = 7077DA8054274D02A63089ED /* /Users/alejandroregidornova/Documents/compilerCPP/ast_printer.h */; };
+		48E67BD4E4734EA2BFC69CF8 /* /Users/alejandroregidornova/Documents/compilerCPP/codegen.cpp */ = {isa = PBXBuildFile; fileRef = 6EDB55DCF16E41A396199E05 /* /Users/alejandroregidornova/Documents/compilerCPP/codegen.cpp */; };
+		560F6696A20E4B3CBE7EE6B0 /* /Users/alejandroregidornova/Documents/compilerCPP/lexer.h */ = {isa = PBXBuildFile; fileRef = FDD12D8E12E74BBEADB2278E /* /Users/alejandroregidornova/Documents/compilerCPP/lexer.h */; };
+		7F106772B45D476183E76849 /* /Users/alejandroregidornova/Documents/compilerCPP/parser.h */ = {isa = PBXBuildFile; fileRef = 4AF1D39F3B7744A0B728E290 /* /Users/alejandroregidornova/Documents/compilerCPP/parser.h */; };
+		84AFCE7DEE674AD99457742A /* /Users/alejandroregidornova/Documents/compilerCPP/lexer.cpp */ = {isa = PBXBuildFile; fileRef = F93A19071D4F4AE4908B9ED6 /* /Users/alejandroregidornova/Documents/compilerCPP/lexer.cpp */; };
+		8B23B8EF73694E81A6CEA041 /* /Users/alejandroregidornova/Documents/compilerCPP/ir_printer.cpp */ = {isa = PBXBuildFile; fileRef = E202324397D545BDB7881A6B /* /Users/alejandroregidornova/Documents/compilerCPP/ir_printer.cpp */; };
+		9D520C12C89747DB8E1D1B6C /* /Users/alejandroregidornova/Documents/compilerCPP/codegen.h */ = {isa = PBXBuildFile; fileRef = 6E959E62A6824E9D8B0CC782 /* /Users/alejandroregidornova/Documents/compilerCPP/codegen.h */; };
+		9EB9E782DA5E4F368A33CAA6 /* /Users/alejandroregidornova/Documents/compilerCPP/ir.h */ = {isa = PBXBuildFile; fileRef = EF3807071D2E4BFA8DD0631F /* /Users/alejandroregidornova/Documents/compilerCPP/ir.h */; };
+		A3D64E146E3646C981DFA8B1 /* /Users/alejandroregidornova/Documents/compilerCPP/ast.h */ = {isa = PBXBuildFile; fileRef = 2AF9E198F56A47AEBC3FD687 /* /Users/alejandroregidornova/Documents/compilerCPP/ast.h */; };
+		CB8AF0FF0A984C56A457183B /* /Users/alejandroregidornova/Documents/compilerCPP/lowering.h */ = {isa = PBXBuildFile; fileRef = 926BA722072C41F6ADA9BD68 /* /Users/alejandroregidornova/Documents/compilerCPP/lowering.h */; };
+		CC8E9D88DBBB4E018FC56CD4 /* /Users/alejandroregidornova/Documents/compilerCPP/ast_printer.cpp */ = {isa = PBXBuildFile; fileRef = 886FC6C6C84F4D42BE8AE952 /* /Users/alejandroregidornova/Documents/compilerCPP/ast_printer.cpp */; };
+		DF0D17BDC9E84B078B7E28D6 /* /Users/alejandroregidornova/Documents/compilerCPP/parser.cpp */ = {isa = PBXBuildFile; fileRef = 42AA4B8FE2324B668A47EE78 /* /Users/alejandroregidornova/Documents/compilerCPP/parser.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		77E94ABE5CA5491C93741B13 /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Debug;
-		};
-		A3468209C27C4D6AA0EEFDB4 /* Release */ = {
+		0A6DD49FF98547A1B5587442 /* Release */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Release;
 		};
-		DC90526AB4DA486E9C96745A /* RelWithDebInfo */ = {
+		11EAD7BBD19D41C6BC51A8BE /* RelWithDebInfo */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = RelWithDebInfo;
 		};
-		FF8D4076F4E3466BBABBA998 /* MinSizeRel */ = {
+		43C70C515DF44FEEA027D5C3 /* MinSizeRel */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = MinSizeRel;
 		};
+		6512C1219729423EBC4EA97D /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		67C30478FE1F487BB9C32709 /* PBXContainerItemProxy */ = {
+		A2FCFCB65F834AD0ACBEC670 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 89704D339A474D5B87E0DD81 /* Project object */;
+			containerPortal = CACCC9000159438FB5363E4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1CC5D815784702CE843305BB;
+			remoteInfo = ZERO_CHECK;
+		};
+		A84599F8CB5148BAB8560A15 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CACCC9000159438FB5363E4F /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 7EDB04568E8AE1A61A97B15C;
 			remoteInfo = compiler;
 		};
-		C0225ADF96F44B16A0EB0315 /* PBXContainerItemProxy */ = {
+		C65EB927CE05448A9E27942D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 89704D339A474D5B87E0DD81 /* Project object */;
+			containerPortal = CACCC9000159438FB5363E4F /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 6E7422BD1817DCCB105AA055;
-			remoteInfo = ZERO_CHECK;
-		};
-		D019F474CC9645E8AAA796A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 89704D339A474D5B87E0DD81 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E7422BD1817DCCB105AA055;
+			remoteGlobalIDString = 1CC5D815784702CE843305BB;
 			remoteInfo = ZERO_CHECK;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		14F2D0CB39614DD89BE462FC /* compiler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = compiler; sourceTree = BUILT_PRODUCTS_DIR; };
-		428F3122FAA44CB8A78C8D4B /* /Users/alejandroregidornova/CLionProjects/compiler/main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = main.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
-		429419D8DE8146F98D480EDA /* /Users/alejandroregidornova/CLionProjects/compiler/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		558481657A754653B6492443 /* /Users/alejandroregidornova/CLionProjects/compiler/parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = parser.cpp; path = parser.cpp; sourceTree = SOURCE_ROOT; };
-		69B245DF68514C5695187BE5 /* /Users/alejandroregidornova/CLionProjects/compiler/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		798C274992C84FB38AC868BF /* /Users/alejandroregidornova/CLionProjects/compiler/codegen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = codegen.h; path = codegen.h; sourceTree = SOURCE_ROOT; };
-		7A05FEFAAB684B1B893913D5 /* /Users/alejandroregidornova/CLionProjects/compiler/codegen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = codegen.cpp; path = codegen.cpp; sourceTree = SOURCE_ROOT; };
-		A6E6EA2B2E604462ACA618F2 /* /Users/alejandroregidornova/CLionProjects/compiler/lexer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = lexer.cpp; path = lexer.cpp; sourceTree = SOURCE_ROOT; };
-		B11CEB8F0AB44DBF8EF25898 /* /Users/alejandroregidornova/CLionProjects/compiler/lexer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lexer.h; path = lexer.h; sourceTree = SOURCE_ROOT; };
-		E518075496CC412192370AF7 /* /Users/alejandroregidornova/CLionProjects/compiler/parser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = parser.h; path = parser.h; sourceTree = SOURCE_ROOT; };
-		F52340FA0C9247D9BB7E4D02 /* /Users/alejandroregidornova/CLionProjects/compiler/ast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ast.h; path = ast.h; sourceTree = SOURCE_ROOT; };
-		F6134FEB694F4992BC2E6BC9 /* /Users/alejandroregidornova/CLionProjects/compiler/ast_printer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ast_printer.cpp; path = ast_printer.cpp; sourceTree = SOURCE_ROOT; };
-		F8B9E213D20D44E19D99B08C /* /Users/alejandroregidornova/CLionProjects/compiler/ast_printer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ast_printer.h; path = ast_printer.h; sourceTree = SOURCE_ROOT; };
+		2AF9E198F56A47AEBC3FD687 /* /Users/alejandroregidornova/Documents/compilerCPP/ast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ast.h; path = ast.h; sourceTree = SOURCE_ROOT; };
+		42AA4B8FE2324B668A47EE78 /* /Users/alejandroregidornova/Documents/compilerCPP/parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = parser.cpp; path = parser.cpp; sourceTree = SOURCE_ROOT; };
+		4AF1D39F3B7744A0B728E290 /* /Users/alejandroregidornova/Documents/compilerCPP/parser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = parser.h; path = parser.h; sourceTree = SOURCE_ROOT; };
+		6E959E62A6824E9D8B0CC782 /* /Users/alejandroregidornova/Documents/compilerCPP/codegen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = codegen.h; path = codegen.h; sourceTree = SOURCE_ROOT; };
+		6EDB55DCF16E41A396199E05 /* /Users/alejandroregidornova/Documents/compilerCPP/codegen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = codegen.cpp; path = codegen.cpp; sourceTree = SOURCE_ROOT; };
+		6F671E333A134205B32C9F9F /* /Users/alejandroregidornova/Documents/compilerCPP/ir_printer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ir_printer.h; path = ir_printer.h; sourceTree = SOURCE_ROOT; };
+		7077DA8054274D02A63089ED /* /Users/alejandroregidornova/Documents/compilerCPP/ast_printer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ast_printer.h; path = ast_printer.h; sourceTree = SOURCE_ROOT; };
+		7FD1638EFF1542609B70DDE2 /* /Users/alejandroregidornova/Documents/compilerCPP/main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = main.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
+		886FC6C6C84F4D42BE8AE952 /* /Users/alejandroregidornova/Documents/compilerCPP/ast_printer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ast_printer.cpp; path = ast_printer.cpp; sourceTree = SOURCE_ROOT; };
+		88F2B92A6CDC4E7CBE2714BD /* /Users/alejandroregidornova/Documents/compilerCPP/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		926BA722072C41F6ADA9BD68 /* /Users/alejandroregidornova/Documents/compilerCPP/lowering.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lowering.h; path = lowering.h; sourceTree = SOURCE_ROOT; };
+		9AE78075795643FDB4829F44 /* compiler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = compiler; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6AA3F750CAC426788DE7334 /* /Users/alejandroregidornova/Documents/compilerCPP/lowering.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = lowering.cpp; path = lowering.cpp; sourceTree = SOURCE_ROOT; };
+		E202324397D545BDB7881A6B /* /Users/alejandroregidornova/Documents/compilerCPP/ir_printer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ir_printer.cpp; path = ir_printer.cpp; sourceTree = SOURCE_ROOT; };
+		E6EC722A15D944B5946BEA5F /* /Users/alejandroregidornova/Documents/compilerCPP/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		EF3807071D2E4BFA8DD0631F /* /Users/alejandroregidornova/Documents/compilerCPP/ir.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ir.h; path = ir.h; sourceTree = SOURCE_ROOT; };
+		F93A19071D4F4AE4908B9ED6 /* /Users/alejandroregidornova/Documents/compilerCPP/lexer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = lexer.cpp; path = lexer.cpp; sourceTree = SOURCE_ROOT; };
+		FDD12D8E12E74BBEADB2278E /* /Users/alejandroregidornova/Documents/compilerCPP/lexer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lexer.h; path = lexer.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		AA4B828D1C4644E3A259AC26 /* Frameworks */ = {
+		9A9D9492DCDD44EA9184C966 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -129,87 +139,92 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13AA119BC79A4C02AE5E5501 /* Source Files */ = {
+		202A6A72D070445F9313BACF /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				F6134FEB694F4992BC2E6BC9 /* /Users/alejandroregidornova/CLionProjects/compiler/ast_printer.cpp */,
-				7A05FEFAAB684B1B893913D5 /* /Users/alejandroregidornova/CLionProjects/compiler/codegen.cpp */,
-				A6E6EA2B2E604462ACA618F2 /* /Users/alejandroregidornova/CLionProjects/compiler/lexer.cpp */,
-				428F3122FAA44CB8A78C8D4B /* /Users/alejandroregidornova/CLionProjects/compiler/main.cpp */,
-				558481657A754653B6492443 /* /Users/alejandroregidornova/CLionProjects/compiler/parser.cpp */,
+				886FC6C6C84F4D42BE8AE952 /* /Users/alejandroregidornova/Documents/compilerCPP/ast_printer.cpp */,
+				6EDB55DCF16E41A396199E05 /* /Users/alejandroregidornova/Documents/compilerCPP/codegen.cpp */,
+				E202324397D545BDB7881A6B /* /Users/alejandroregidornova/Documents/compilerCPP/ir_printer.cpp */,
+				F93A19071D4F4AE4908B9ED6 /* /Users/alejandroregidornova/Documents/compilerCPP/lexer.cpp */,
+				B6AA3F750CAC426788DE7334 /* /Users/alejandroregidornova/Documents/compilerCPP/lowering.cpp */,
+				7FD1638EFF1542609B70DDE2 /* /Users/alejandroregidornova/Documents/compilerCPP/main.cpp */,
+				42AA4B8FE2324B668A47EE78 /* /Users/alejandroregidornova/Documents/compilerCPP/parser.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		29746586EFF3472D9340E480 /* compiler */ = {
-			isa = PBXGroup;
-			children = (
-				13AA119BC79A4C02AE5E5501 /* Source Files */,
-				6AF579A87024429697E4A1FD /* Header Files */,
-				69B245DF68514C5695187BE5 /* /Users/alejandroregidornova/CLionProjects/compiler/CMakeLists.txt */,
-			);
-			name = compiler;
-			sourceTree = "<group>";
-		};
-		581C18C45BDB4D9EA30789E7 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		6AF579A87024429697E4A1FD /* Header Files */ = {
-			isa = PBXGroup;
-			children = (
-				F52340FA0C9247D9BB7E4D02 /* /Users/alejandroregidornova/CLionProjects/compiler/ast.h */,
-				F8B9E213D20D44E19D99B08C /* /Users/alejandroregidornova/CLionProjects/compiler/ast_printer.h */,
-				798C274992C84FB38AC868BF /* /Users/alejandroregidornova/CLionProjects/compiler/codegen.h */,
-				B11CEB8F0AB44DBF8EF25898 /* /Users/alejandroregidornova/CLionProjects/compiler/lexer.h */,
-				E518075496CC412192370AF7 /* /Users/alejandroregidornova/CLionProjects/compiler/parser.h */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		73B0273CFDEE48B9BBD073F5 /* Resources */ = {
+		49BAB6454A574813A342F794 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		8651E1C587B145A2BC834496 /* ALL_BUILD */ = {
+		520A01CE4723446C9DB0492E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CDA30F7932074D959B5A6616 /* CMake Rules */,
-				429419D8DE8146F98D480EDA /* /Users/alejandroregidornova/CLionProjects/compiler/CMakeLists.txt */,
+				9AE78075795643FDB4829F44 /* compiler */,
 			);
-			name = ALL_BUILD;
+			name = Products;
 			sourceTree = "<group>";
 		};
-		B0F3C0AD883A4D42AADB7143 = {
-			isa = PBXGroup;
-			children = (
-				29746586EFF3472D9340E480 /* compiler */,
-				8651E1C587B145A2BC834496 /* ALL_BUILD */,
-				E1BF752F0A4245E9B8A9762A /* Products */,
-				581C18C45BDB4D9EA30789E7 /* Frameworks */,
-				73B0273CFDEE48B9BBD073F5 /* Resources */,
-			);
-			sourceTree = "<group>";
-		};
-		CDA30F7932074D959B5A6616 /* CMake Rules */ = {
+		588C7E94D95F442C853BA557 /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		E1BF752F0A4245E9B8A9762A /* Products */ = {
+		83673F9DA2F24176A9BACC6F /* compiler */ = {
 			isa = PBXGroup;
 			children = (
-				14F2D0CB39614DD89BE462FC /* compiler */,
+				9FF332115AE1426D8FE19658 /* Header Files */,
+				202A6A72D070445F9313BACF /* Source Files */,
+				88F2B92A6CDC4E7CBE2714BD /* /Users/alejandroregidornova/Documents/compilerCPP/CMakeLists.txt */,
 			);
-			name = Products;
+			name = compiler;
+			sourceTree = "<group>";
+		};
+		9FF332115AE1426D8FE19658 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				2AF9E198F56A47AEBC3FD687 /* /Users/alejandroregidornova/Documents/compilerCPP/ast.h */,
+				7077DA8054274D02A63089ED /* /Users/alejandroregidornova/Documents/compilerCPP/ast_printer.h */,
+				6E959E62A6824E9D8B0CC782 /* /Users/alejandroregidornova/Documents/compilerCPP/codegen.h */,
+				EF3807071D2E4BFA8DD0631F /* /Users/alejandroregidornova/Documents/compilerCPP/ir.h */,
+				6F671E333A134205B32C9F9F /* /Users/alejandroregidornova/Documents/compilerCPP/ir_printer.h */,
+				FDD12D8E12E74BBEADB2278E /* /Users/alejandroregidornova/Documents/compilerCPP/lexer.h */,
+				926BA722072C41F6ADA9BD68 /* /Users/alejandroregidornova/Documents/compilerCPP/lowering.h */,
+				4AF1D39F3B7744A0B728E290 /* /Users/alejandroregidornova/Documents/compilerCPP/parser.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		B81CCEE8B5024DB69428ECA9 = {
+			isa = PBXGroup;
+			children = (
+				BFE0DB4654924A8581316648 /* ALL_BUILD */,
+				83673F9DA2F24176A9BACC6F /* compiler */,
+				520A01CE4723446C9DB0492E /* Products */,
+				E29AA233A683434A9B4200A5 /* Frameworks */,
+				49BAB6454A574813A342F794 /* Resources */,
+			);
+			sourceTree = "<group>";
+		};
+		BFE0DB4654924A8581316648 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				588C7E94D95F442C853BA557 /* CMake Rules */,
+				E6EC722A15D944B5946BEA5F /* /Users/alejandroregidornova/Documents/compilerCPP/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		E29AA233A683434A9B4200A5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -217,48 +232,48 @@
 /* Begin PBXNativeTarget section */
 		7EDB04568E8AE1A61A97B15C /* compiler */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 921B5CA1392D4A7FA06A78F5 /* Build configuration list for PBXNativeTarget "compiler" */;
+			buildConfigurationList = 2854A764E6BB4B5E95D7215E /* Build configuration list for PBXNativeTarget "compiler" */;
 			buildPhases = (
-				D3BFF410D48E452F80307F03 /* Sources */,
-				AA4B828D1C4644E3A259AC26 /* Frameworks */,
+				4302CA3C3EFE4B10B7EFCDA4 /* Sources */,
+				9A9D9492DCDD44EA9184C966 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				9CDA8608987C4F8C92F4F101 /* PBXTargetDependency */,
+				B9FEEE48B04E422EA4B059A0 /* PBXTargetDependency */,
 			);
 			name = compiler;
 			productName = compiler;
-			productReference = 14F2D0CB39614DD89BE462FC /* compiler */;
+			productReference = 9AE78075795643FDB4829F44 /* compiler */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		89704D339A474D5B87E0DD81 /* Project object */ = {
+		CACCC9000159438FB5363E4F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2620;
 			};
-			buildConfigurationList = 58BB2925F6324BDEBB506D13 /* Build configuration list for PBXProject "compiler" */;
+			buildConfigurationList = C33C59D504A74386BD9F8043 /* Build configuration list for PBXProject "compiler" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				77E94ABE5CA5491C93741B13 /* Debug */,
-				A3468209C27C4D6AA0EEFDB4 /* Release */,
-				FF8D4076F4E3466BBABBA998 /* MinSizeRel */,
-				DC90526AB4DA486E9C96745A /* RelWithDebInfo */,
+				6512C1219729423EBC4EA97D /* Debug */,
+				0A6DD49FF98547A1B5587442 /* Release */,
+				43C70C515DF44FEEA027D5C3 /* MinSizeRel */,
+				11EAD7BBD19D41C6BC51A8BE /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = B0F3C0AD883A4D42AADB7143;
-			projectDirPath = /Users/alejandroregidornova/CLionProjects/compiler;
+			mainGroup = B81CCEE8B5024DB69428ECA9;
+			projectDirPath = /Users/alejandroregidornova/Documents/compilerCPP;
 			projectRoot = "";
 			targets = (
-				27F55CD4538E1195EA0E4385 /* ALL_BUILD */,
+				7F4646D0F836D34249CDF3FB /* ALL_BUILD */,
 				7EDB04568E8AE1A61A97B15C /* compiler */,
-				6E7422BD1817DCCB105AA055 /* ZERO_CHECK */,
+				1CC5D815784702CE843305BB /* ZERO_CHECK */,
 			);
 		};
 /* End PBXProject section */
@@ -279,7 +294,7 @@
 exit 0";
 			showEnvVarsInLog = 0;
 		};
-		453650647D39294DDBFEF9E2 /* Generate CMakeFiles/ZERO_CHECK */ = {
+		3E9AE57FB8380436E62CFFFD /* Generate CMakeFiles/ZERO_CHECK */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -289,25 +304,58 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/alejandroregidornova/CLionProjects/compiler/build/CMakeFiles/ZERO_CHECK			);
+/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/alejandroregidornova/CLionProjects/compiler/build
-  make -f /Users/alejandroregidornova/CLionProjects/compiler/build/CMakeScripts/ReRunCMake.make
+  cd /Users/alejandroregidornova/Documents/compilerCPP/build
+  make -f /Users/alejandroregidornova/Documents/compilerCPP/build/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/alejandroregidornova/CLionProjects/compiler/build
-  make -f /Users/alejandroregidornova/CLionProjects/compiler/build/CMakeScripts/ReRunCMake.make
+  cd /Users/alejandroregidornova/Documents/compilerCPP/build
+  make -f /Users/alejandroregidornova/Documents/compilerCPP/build/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/alejandroregidornova/CLionProjects/compiler/build
-  make -f /Users/alejandroregidornova/CLionProjects/compiler/build/CMakeScripts/ReRunCMake.make
+  cd /Users/alejandroregidornova/Documents/compilerCPP/build
+  make -f /Users/alejandroregidornova/Documents/compilerCPP/build/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/alejandroregidornova/CLionProjects/compiler/build
-  make -f /Users/alejandroregidornova/CLionProjects/compiler/build/CMakeScripts/ReRunCMake.make
+  cd /Users/alejandroregidornova/Documents/compilerCPP/build
+  make -f /Users/alejandroregidornova/Documents/compilerCPP/build/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		67B8E47479D7DCA3050F48FC /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/alejandroregidornova/Documents/compilerCPP/build
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/alejandroregidornova/Documents/compilerCPP/build
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/alejandroregidornova/Documents/compilerCPP/build
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/alejandroregidornova/Documents/compilerCPP/build
+  echo Build\\ all\\ projects
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -327,307 +375,51 @@ fi
 exit 0";
 			showEnvVarsInLog = 0;
 		};
-		E100F3E90940EFAAB39C92B0 /* Generate CMakeFiles/ALL_BUILD */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ALL_BUILD";
-			outputPaths = (
-/Users/alejandroregidornova/CLionProjects/compiler/build/CMakeFiles/ALL_BUILD			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e
-if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/alejandroregidornova/CLionProjects/compiler/build
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/alejandroregidornova/CLionProjects/compiler/build
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/alejandroregidornova/CLionProjects/compiler/build
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/alejandroregidornova/CLionProjects/compiler/build
-  echo Build\\ all\\ projects
-fi
-";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		D3BFF410D48E452F80307F03 /* Sources */ = {
+		4302CA3C3EFE4B10B7EFCDA4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F085B0F9D1E541C7894AEF73 /* /Users/alejandroregidornova/CLionProjects/compiler/ast_printer.cpp */,
-				FB6D849073FC4447ABDBAAF1 /* /Users/alejandroregidornova/CLionProjects/compiler/codegen.cpp */,
-				DC691B0A904440918CB65668 /* /Users/alejandroregidornova/CLionProjects/compiler/lexer.cpp */,
-				B23AC58E414E41A5A93C8FE2 /* /Users/alejandroregidornova/CLionProjects/compiler/main.cpp */,
-				146B63F2F9294793B6DDC17E /* /Users/alejandroregidornova/CLionProjects/compiler/parser.cpp */,
+				CC8E9D88DBBB4E018FC56CD4 /* /Users/alejandroregidornova/Documents/compilerCPP/ast_printer.cpp */,
+				48E67BD4E4734EA2BFC69CF8 /* /Users/alejandroregidornova/Documents/compilerCPP/codegen.cpp */,
+				8B23B8EF73694E81A6CEA041 /* /Users/alejandroregidornova/Documents/compilerCPP/ir_printer.cpp */,
+				84AFCE7DEE674AD99457742A /* /Users/alejandroregidornova/Documents/compilerCPP/lexer.cpp */,
+				356944520562430BAB4AB27E /* /Users/alejandroregidornova/Documents/compilerCPP/lowering.cpp */,
+				03B19067B32C4A069A986F76 /* /Users/alejandroregidornova/Documents/compilerCPP/main.cpp */,
+				DF0D17BDC9E84B078B7E28D6 /* /Users/alejandroregidornova/Documents/compilerCPP/parser.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		852A5AEFC169487281C4061B /* PBXTargetDependency */ = {
+		984A9E5977264895A70F70F5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 7EDB04568E8AE1A61A97B15C /* compiler */;
-			targetProxy = 67C30478FE1F487BB9C32709 /* PBXContainerItemProxy */;
+			targetProxy = A84599F8CB5148BAB8560A15 /* PBXContainerItemProxy */;
 		};
-		937ECE26584E46DBB0E79155 /* PBXTargetDependency */ = {
+		B9FEEE48B04E422EA4B059A0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6E7422BD1817DCCB105AA055 /* ZERO_CHECK */;
-			targetProxy = D019F474CC9645E8AAA796A1 /* PBXContainerItemProxy */;
+			target = 1CC5D815784702CE843305BB /* ZERO_CHECK */;
+			targetProxy = C65EB927CE05448A9E27942D /* PBXContainerItemProxy */;
 		};
-		9CDA8608987C4F8C92F4F101 /* PBXTargetDependency */ = {
+		CD9687A3A1B646D3832E76BF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6E7422BD1817DCCB105AA055 /* ZERO_CHECK */;
-			targetProxy = C0225ADF96F44B16A0EB0315 /* PBXContainerItemProxy */;
+			target = 1CC5D815784702CE843305BB /* ZERO_CHECK */;
+			targetProxy = A2FCFCB65F834AD0ACBEC670 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1416E11D12014CF3BCC7E217 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				SDKROOT = "";
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = /Users/alejandroregidornova/CLionProjects/compiler/build/build;
-			};
-			name = RelWithDebInfo;
-		};
-		519643ABA5354C858753AB4C /* Release */ = {
+		0D9BC30034B0470BB0C6A4B6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		560BE5F4A858413C8A23F3A5 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		5FF0E65779134276AB64F173 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		73DF39B59266482DB643612B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				SDKROOT = "";
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = /Users/alejandroregidornova/CLionProjects/compiler/build/build;
-			};
-			name = Release;
-		};
-		75945CA7C17244319E8B74FC /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		7BB6726C150044C6A98E2C66 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = /Users/alejandroregidornova/CLionProjects/compiler/build/MinSizeRel;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=gnu++20' ";
-				OTHER_LDFLAGS = (" -Wl,-search_paths_first -Wl,-headerpad_max_install_names","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = compiler;
-				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/alejandroregidornova/CLionProjects/compiler/build/build/compiler.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		8BA05DBB47F7401C90EBFD20 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				SDKROOT = "";
-				SYMROOT = /Users/alejandroregidornova/CLionProjects/compiler/build/build;
-			};
-			name = Debug;
-		};
-		A081CF163D9F4153B50963BC /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				SDKROOT = "";
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = /Users/alejandroregidornova/CLionProjects/compiler/build/build;
-			};
-			name = MinSizeRel;
-		};
-		A780820968494B28973E40FD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		AD14D87C214745C68760F824 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		B5B6D54848E746B0A81AB7E4 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = /Users/alejandroregidornova/CLionProjects/compiler/build/RelWithDebInfo;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=gnu++20' ";
-				OTHER_LDFLAGS = (" -Wl,-search_paths_first -Wl,-headerpad_max_install_names","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = compiler;
-				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/alejandroregidornova/CLionProjects/compiler/build/build/compiler.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		B7D3264A67C844A8A2EF443B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = /Users/alejandroregidornova/CLionProjects/compiler/build/Debug;
+				CONFIGURATION_BUILD_DIR = /Users/alejandroregidornova/Documents/compilerCPP/build/Debug;
 				EXECUTABLE_PREFIX = "";
 				EXECUTABLE_SUFFIX = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -642,62 +434,13 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = compiler;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/alejandroregidornova/CLionProjects/compiler/build/build/compiler.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				TARGET_TEMP_DIR = "/Users/alejandroregidornova/Documents/compilerCPP/build/build/compiler.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
 		};
-		C2BE04114192421FA4113707 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = /Users/alejandroregidornova/CLionProjects/compiler/build/Release;
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=gnu++20' ";
-				OTHER_LDFLAGS = (" -Wl,-search_paths_first -Wl,-headerpad_max_install_names","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = compiler;
-				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/alejandroregidornova/CLionProjects/compiler/build/build/compiler.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		E7AC2DF0DE454A56837E85AF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		F9E12F5A56DC4BA290A888F3 /* MinSizeRel */ = {
+		32565BAB900D4AF7A27CCE30 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -719,54 +462,328 @@ fi
 			};
 			name = MinSizeRel;
 		};
+		37045039FEBF49D29A4F3D77 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/alejandroregidornova/Documents/compilerCPP/build/MinSizeRel;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=gnu++20' ";
+				OTHER_LDFLAGS = (" -Wl,-search_paths_first -Wl,-headerpad_max_install_names","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = compiler;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/alejandroregidornova/Documents/compilerCPP/build/build/compiler.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		3A19B4418FB04695BDC0959B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		5A25BF38D87C45208333F3EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				SDKROOT = "";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SYMROOT = /Users/alejandroregidornova/Documents/compilerCPP/build/build;
+			};
+			name = Release;
+		};
+		69A015B1EB634ADBB2A77704 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/alejandroregidornova/Documents/compilerCPP/build/RelWithDebInfo;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=gnu++20' ";
+				OTHER_LDFLAGS = (" -Wl,-search_paths_first -Wl,-headerpad_max_install_names","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = compiler;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/alejandroregidornova/Documents/compilerCPP/build/build/compiler.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		711C225617B8412089DA72FD /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		77CA398208C24A9BADA93352 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		77F5A2A5490C423DB2670626 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		9359C5D4D3ED47FF99FF0886 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				SDKROOT = "";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SYMROOT = /Users/alejandroregidornova/Documents/compilerCPP/build/build;
+			};
+			name = MinSizeRel;
+		};
+		974D369FEE924F86AA6760AC /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		AF6A9D3D268B4E8A868F6474 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/alejandroregidornova/Documents/compilerCPP/build/Release;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=gnu++20' ";
+				OTHER_LDFLAGS = (" -Wl,-search_paths_first -Wl,-headerpad_max_install_names","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = compiler;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/alejandroregidornova/Documents/compilerCPP/build/build/compiler.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		B2DA9B69B79248CD85A922B2 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				SDKROOT = "";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SYMROOT = /Users/alejandroregidornova/Documents/compilerCPP/build/build;
+			};
+			name = RelWithDebInfo;
+		};
+		C7531932EB164D3DAB00E9AD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		C9B853C07C944D6CA6B1AA2D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				SDKROOT = "";
+				SYMROOT = /Users/alejandroregidornova/Documents/compilerCPP/build/build;
+			};
+			name = Debug;
+		};
+		E9214AEEC2AD416DB99CE31E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		09EBF076061A4D8AA78B248D /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		2854A764E6BB4B5E95D7215E /* Build configuration list for PBXNativeTarget "compiler" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E7AC2DF0DE454A56837E85AF /* Debug */,
-				A780820968494B28973E40FD /* Release */,
-				F9E12F5A56DC4BA290A888F3 /* MinSizeRel */,
-				560BE5F4A858413C8A23F3A5 /* RelWithDebInfo */,
+				0D9BC30034B0470BB0C6A4B6 /* Debug */,
+				AF6A9D3D268B4E8A868F6474 /* Release */,
+				37045039FEBF49D29A4F3D77 /* MinSizeRel */,
+				69A015B1EB634ADBB2A77704 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		22FEA23AA09949CAB578F750 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		428922267D814AE0835AE962 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5FF0E65779134276AB64F173 /* Debug */,
-				519643ABA5354C858753AB4C /* Release */,
-				75945CA7C17244319E8B74FC /* MinSizeRel */,
-				AD14D87C214745C68760F824 /* RelWithDebInfo */,
+				77F5A2A5490C423DB2670626 /* Debug */,
+				E9214AEEC2AD416DB99CE31E /* Release */,
+				32565BAB900D4AF7A27CCE30 /* MinSizeRel */,
+				974D369FEE924F86AA6760AC /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		58BB2925F6324BDEBB506D13 /* Build configuration list for PBXProject "compiler" */ = {
+		C33C59D504A74386BD9F8043 /* Build configuration list for PBXProject "compiler" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8BA05DBB47F7401C90EBFD20 /* Debug */,
-				73DF39B59266482DB643612B /* Release */,
-				A081CF163D9F4153B50963BC /* MinSizeRel */,
-				1416E11D12014CF3BCC7E217 /* RelWithDebInfo */,
+				C9B853C07C944D6CA6B1AA2D /* Debug */,
+				5A25BF38D87C45208333F3EA /* Release */,
+				9359C5D4D3ED47FF99FF0886 /* MinSizeRel */,
+				B2DA9B69B79248CD85A922B2 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		921B5CA1392D4A7FA06A78F5 /* Build configuration list for PBXNativeTarget "compiler" */ = {
+		CD4E2AE3557946EBB650C2FF /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B7D3264A67C844A8A2EF443B /* Debug */,
-				C2BE04114192421FA4113707 /* Release */,
-				7BB6726C150044C6A98E2C66 /* MinSizeRel */,
-				B5B6D54848E746B0A81AB7E4 /* RelWithDebInfo */,
+				C7531932EB164D3DAB00E9AD /* Debug */,
+				3A19B4418FB04695BDC0959B /* Release */,
+				77CA398208C24A9BADA93352 /* MinSizeRel */,
+				711C225617B8412089DA72FD /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 89704D339A474D5B87E0DD81 /* Project object */;
+	rootObject = CACCC9000159438FB5363E4F /* Project object */;
 }

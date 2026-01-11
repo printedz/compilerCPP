@@ -1,7 +1,7 @@
 {
 	"InstallScripts" : 
 	[
-		"/Users/alejandroregidornova/CLionProjects/compiler/build/cmake_install.cmake"
+		"/Users/alejandroregidornova/Documents/compilerCPP/build/cmake_install.cmake"
 	],
 	"Parallel" : false
 }

@@ -1,4 +1,3 @@
-dependencies: \
-  /Users/alejandroregidornova/CLionProjects/compiler/lexer.cpp \
-  /Users/alejandroregidornova/CLionProjects/compiler/lexer.h \
-  /Users/alejandroregidornova/CLionProjects/compiler/ast.h
+dependencies: /Users/alejandroregidornova/Documents/compilerCPP/lexer.cpp \
+  /Users/alejandroregidornova/Documents/compilerCPP/lexer.h \
+  /Users/alejandroregidornova/Documents/compilerCPP/ast.h

@@ -1,6 +1,9 @@
-dependencies: /Users/alejandroregidornova/CLionProjects/compiler/main.cpp \
-  /Users/alejandroregidornova/CLionProjects/compiler/lexer.h \
-  /Users/alejandroregidornova/CLionProjects/compiler/ast.h \
-  /Users/alejandroregidornova/CLionProjects/compiler/parser.h \
-  /Users/alejandroregidornova/CLionProjects/compiler/codegen.h \
-  /Users/alejandroregidornova/CLionProjects/compiler/ast_printer.h
+dependencies: /Users/alejandroregidornova/Documents/compilerCPP/main.cpp \
+  /Users/alejandroregidornova/Documents/compilerCPP/lexer.h \
+  /Users/alejandroregidornova/Documents/compilerCPP/ast.h \
+  /Users/alejandroregidornova/Documents/compilerCPP/parser.h \
+  /Users/alejandroregidornova/Documents/compilerCPP/codegen.h \
+  /Users/alejandroregidornova/Documents/compilerCPP/ir.h \
+  /Users/alejandroregidornova/Documents/compilerCPP/ast_printer.h \
+  /Users/alejandroregidornova/Documents/compilerCPP/ir_printer.h \
+  /Users/alejandroregidornova/Documents/compilerCPP/lowering.h
