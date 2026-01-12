@@ -11,6 +11,14 @@
 #include "ir_printer.h"
 #include "lowering.h"
 
+/*
+ TODO:
+ 4. Language growth: add binary ops (+ - * /), precedence, and variable declarations.
+ 5. Control flow: if/else, while, blocks, and compound statements.
+ 6. Function calls + parameters: extend ABI handling and stack alignment.
+ 7. Testing harness: golden tests that compare expected assembly/IR.
+ */
+
 void printUsage() {
     std::cout << "Uso: compiler [opciones] <archivo.c>\n";
     std::cout << "Opciones:\n";
