@@ -15,6 +15,7 @@ const std::vector<Lexer::TokenDefinition>& Lexer::getTokenDefinitions() {
         {TokenType::PLUS, std::regex("^\\+")},
         {TokenType::STAR, std::regex("^\\*")},
         {TokenType::SLASH, std::regex("^/")},
+        {TokenType::PERCENT, std::regex("^%")},
         {TokenType::OPEN_PAREN, std::regex("^\\(")},
         {TokenType::CLOSE_PAREN, std::regex("^\\)")},
         {TokenType::OPEN_BRACE, std::regex("^\\{")},

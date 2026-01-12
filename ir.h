@@ -17,7 +17,7 @@ instruction = Mov(operand src, operand dst)
             | AllocateStack(int)
             | Ret
 unary_operator = Neg | Not
-binary_operator = Add | Sub | Mul | Div
+binary_operator = Add | Sub | Mul | Div | Mod
 operand = Imm(int) | Reg(reg) | Pseudo(identifier) | Stack(int)
 reg = AX | R10
 */
@@ -31,7 +31,8 @@ enum class IRBinaryOperator {
     Add,
     Sub,
     Mul,
-    Div
+    Div,
+    Mod
 };
 
 enum class IRRegister {

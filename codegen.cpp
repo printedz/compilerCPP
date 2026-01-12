@@ -128,7 +128,7 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
             const char* op = (u->op == IRUnaryOperator::Neg) ? "negl" : "notl";
             ss << "    " << op << " " << formatOperand(*u->operand, pseudoOffsets) << "\n";
         } else if (auto* b = dynamic_cast<const IRBinary*>(instPtr.get())) {
-            if (b->op == IRBinaryOperator::Div) {
+            if (b->op == IRBinaryOperator::Div || b->op == IRBinaryOperator::Mod) {
                 std::string dst = formatOperand(*b->dst, pseudoOffsets);
                 std::string src = formatOperand(*b->src, pseudoOffsets);
                 ss << "    movl " << dst << ", %eax\n";
@@ -139,8 +139,12 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
                 } else {
                     ss << "    idivl " << src << "\n";
                 }
-                if (!isRegAX(*b->dst)) {
-                    ss << "    movl %eax, " << dst << "\n";
+                if (b->op == IRBinaryOperator::Div) {
+                    if (!isRegAX(*b->dst)) {
+                        ss << "    movl %eax, " << dst << "\n";
+                    }
+                } else {
+                    ss << "    movl %edx, " << dst << "\n";
                 }
             } else {
                 const char* op = "addl";
@@ -149,6 +153,7 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
                     case IRBinaryOperator::Sub: op = "subl"; break;
                     case IRBinaryOperator::Mul: op = "imull"; break;
                     case IRBinaryOperator::Div: break;
+                    case IRBinaryOperator::Mod: break;
                 }
                 std::string src = formatOperand(*b->src, pseudoOffsets);
                 std::string dst = formatOperand(*b->dst, pseudoOffsets);

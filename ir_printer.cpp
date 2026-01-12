@@ -17,6 +17,7 @@ static const char* toString(IRBinaryOperator op) {
         case IRBinaryOperator::Sub: return "sub";
         case IRBinaryOperator::Mul: return "mul";
         case IRBinaryOperator::Div: return "div";
+        case IRBinaryOperator::Mod: return "mod";
     }
     return "?";
 }

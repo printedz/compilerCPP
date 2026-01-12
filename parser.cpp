@@ -64,10 +64,19 @@ std::unique_ptr<Exp> Parser::parseAddSub() {
 
 std::unique_ptr<Exp> Parser::parseMulDiv() {
     auto left = parseUnary();
-    while (peekToken().type == TokenType::STAR || peekToken().type == TokenType::SLASH) {
+    while (peekToken().type == TokenType::STAR
+        || peekToken().type == TokenType::SLASH
+        || peekToken().type == TokenType::PERCENT) {
         Token op = takeToken();
         auto right = parseUnary();
-        BinaryOperator binOp = (op.type == TokenType::STAR) ? BinaryOperator::Mul : BinaryOperator::Div;
+        BinaryOperator binOp = BinaryOperator::Div;
+        if (op.type == TokenType::STAR) {
+            binOp = BinaryOperator::Mul;
+        } else if (op.type == TokenType::SLASH) {
+            binOp = BinaryOperator::Div;
+        } else {
+            binOp = BinaryOperator::Mod;
+        }
         left = std::make_unique<Binary>(binOp, std::move(left), std::move(right));
     }
     return left;

@@ -18,6 +18,7 @@ enum class TokenType {
     PLUS,       // '+'
     STAR,       // '*'
     SLASH,      // '/'
+    PERCENT,    // '%'
     OPEN_PAREN,
     CLOSE_PAREN,
     OPEN_BRACE,
@@ -37,7 +38,7 @@ struct Token {
 // statement = Return(exp)
 // exp = Constant(int) | Unary(unary_operator, exp) | Binary(binary_operator, exp, exp)
 // unary_operator = Complement | Negate
-// binary_operator = Add | Sub | Mul | Div
+// binary_operator = Add | Sub | Mul | Div | Mod
 // ========================
 
 // Forward decls
@@ -55,7 +56,8 @@ enum class BinaryOperator {
     Add, // '+'
     Sub, // '-'
     Mul, // '*'
-    Div  // '/'
+    Div, // '/'
+    Mod  // '%'
 };
 
 // Expressions

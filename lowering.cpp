@@ -50,6 +50,7 @@ namespace {
                 case BinaryOperator::Sub: op = IRBinaryOperator::Sub; break;
                 case BinaryOperator::Mul: op = IRBinaryOperator::Mul; break;
                 case BinaryOperator::Div: op = IRBinaryOperator::Div; break;
+                case BinaryOperator::Mod: op = IRBinaryOperator::Mod; break;
             }
             instructions.push_back(std::make_unique<IRBinary>(op, std::move(rightVal), std::move(dstVarRef)));
             return std::make_unique<IRPseudo>(tmpName);

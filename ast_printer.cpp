@@ -54,6 +54,7 @@ std::string ASTPrinter::print(const Exp& exp, int indent) {
             case BinaryOperator::Sub: opStr = "Sub"; break;
             case BinaryOperator::Mul: opStr = "Mul"; break;
             case BinaryOperator::Div: opStr = "Div"; break;
+            case BinaryOperator::Mod: opStr = "Mod"; break;
         }
         ss << ind << "Binary(" << opStr << ",\n";
         ss << print(*b->left, indent + 1) << ",\n";
