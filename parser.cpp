@@ -48,9 +48,29 @@ std::unique_ptr<Return> Parser::parseReturn() {
 }
 
 std::unique_ptr<Exp> Parser::parseExp() {
-    // Grammar: <exp> ::= <int> | <unop> <exp> | '(' <exp> ')'
-    // We implement as: unary -> primary | ('~' | '-') unary, and primary -> constant | '(' exp ')'
-    return parseUnary();
+    return parseAddSub();
+}
+
+std::unique_ptr<Exp> Parser::parseAddSub() {
+    auto left = parseMulDiv();
+    while (peekToken().type == TokenType::PLUS || peekToken().type == TokenType::HYPHEN) {
+        Token op = takeToken();
+        auto right = parseMulDiv();
+        BinaryOperator binOp = (op.type == TokenType::PLUS) ? BinaryOperator::Add : BinaryOperator::Sub;
+        left = std::make_unique<Binary>(binOp, std::move(left), std::move(right));
+    }
+    return left;
+}
+
+std::unique_ptr<Exp> Parser::parseMulDiv() {
+    auto left = parseUnary();
+    while (peekToken().type == TokenType::STAR || peekToken().type == TokenType::SLASH) {
+        Token op = takeToken();
+        auto right = parseUnary();
+        BinaryOperator binOp = (op.type == TokenType::STAR) ? BinaryOperator::Mul : BinaryOperator::Div;
+        left = std::make_unique<Binary>(binOp, std::move(left), std::move(right));
+    }
+    return left;
 }
 
 std::unique_ptr<Exp> Parser::parseUnary() {
@@ -62,7 +82,10 @@ std::unique_ptr<Exp> Parser::parseUnary() {
         return std::make_unique<Unary>(UnaryOperator::Negate, parseUnary());
     }
 
-    // primary
+    return parsePrimary();
+}
+
+std::unique_ptr<Exp> Parser::parsePrimary() {
     Token t = peekToken();
     if (t.type == TokenType::OPEN_PAREN) {
         takeToken(); // '('
@@ -71,7 +94,6 @@ std::unique_ptr<Exp> Parser::parseUnary() {
         return inner;
     }
 
-    // constant
     t = takeToken();
     if (t.type == TokenType::CONSTANT) {
         return std::make_unique<Constant>(std::stoi(t.value));

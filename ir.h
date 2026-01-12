@@ -13,9 +13,11 @@ program = Program(function_definition)
 function_definition = Function(identifier name, instruction* instructions)
 instruction = Mov(operand src, operand dst)
             | Unary(unary_operator, operand)
+            | Binary(binary_operator, operand src, operand dst)
             | AllocateStack(int)
             | Ret
 unary_operator = Neg | Not
+binary_operator = Add | Sub | Mul | Div
 operand = Imm(int) | Reg(reg) | Pseudo(identifier) | Stack(int)
 reg = AX | R10
 */
@@ -23,6 +25,13 @@ reg = AX | R10
 enum class IRUnaryOperator {
     Neg,
     Not
+};
+
+enum class IRBinaryOperator {
+    Add,
+    Sub,
+    Mul,
+    Div
 };
 
 enum class IRRegister {
@@ -70,6 +79,14 @@ struct IRUnary : public IRInstruction {
     std::unique_ptr<IROperand> operand;
     IRUnary(IRUnaryOperator o, std::unique_ptr<IROperand> e)
         : op(o), operand(std::move(e)) {}
+};
+
+struct IRBinary : public IRInstruction {
+    IRBinaryOperator op;
+    std::unique_ptr<IROperand> src;
+    std::unique_ptr<IROperand> dst;
+    IRBinary(IRBinaryOperator o, std::unique_ptr<IROperand> s, std::unique_ptr<IROperand> d)
+        : op(o), src(std::move(s)), dst(std::move(d)) {}
 };
 
 struct IRAllocateStack : public IRInstruction {

@@ -19,7 +19,10 @@ private:
     std::unique_ptr<Statement> parseStatement();
     std::unique_ptr<Return> parseReturn();
     std::unique_ptr<Exp> parseExp();
+    std::unique_ptr<Exp> parseAddSub();
+    std::unique_ptr<Exp> parseMulDiv();
     std::unique_ptr<Exp> parseUnary();
+    std::unique_ptr<Exp> parsePrimary();
 
     void expect(TokenType expectedType);
     Token takeToken();

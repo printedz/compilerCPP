@@ -36,6 +36,24 @@ namespace {
             // return dst (fresh operand)
             return std::make_unique<IRPseudo>(tmpName);
         }
+        if (auto b = dynamic_cast<const Binary*>(&e)) {
+            auto leftVal = emitTacky(*b->left, instructions, pseudos);
+            auto rightVal = emitTacky(*b->right, instructions, pseudos);
+            std::string tmpName = freshTempName();
+            pseudos.insert(tmpName);
+            auto dstVar = std::make_unique<IRPseudo>(tmpName);
+            auto dstVarRef = std::make_unique<IRPseudo>(tmpName);
+            instructions.push_back(std::make_unique<IRMov>(std::move(leftVal), std::move(dstVar)));
+            IRBinaryOperator op;
+            switch (b->op) {
+                case BinaryOperator::Add: op = IRBinaryOperator::Add; break;
+                case BinaryOperator::Sub: op = IRBinaryOperator::Sub; break;
+                case BinaryOperator::Mul: op = IRBinaryOperator::Mul; break;
+                case BinaryOperator::Div: op = IRBinaryOperator::Div; break;
+            }
+            instructions.push_back(std::make_unique<IRBinary>(op, std::move(rightVal), std::move(dstVarRef)));
+            return std::make_unique<IRPseudo>(tmpName);
+        }
         // Fallback: constant 0 for unsupported expressions
         return std::make_unique<IRImm>(0);
     }

@@ -11,6 +11,16 @@ static const char* toString(IRUnaryOperator op) {
     return "?";
 }
 
+static const char* toString(IRBinaryOperator op) {
+    switch (op) {
+        case IRBinaryOperator::Add: return "add";
+        case IRBinaryOperator::Sub: return "sub";
+        case IRBinaryOperator::Mul: return "mul";
+        case IRBinaryOperator::Div: return "div";
+    }
+    return "?";
+}
+
 static const char* toString(IRRegister reg) {
     switch (reg) {
         case IRRegister::AX: return "%eax";
@@ -51,6 +61,10 @@ void IRPrinter::emit(const IRInstruction& inst) const {
         emit(*u);
         return;
     }
+    if (auto b = dynamic_cast<const IRBinary*>(&inst)) {
+        emit(*b);
+        return;
+    }
     if (auto a = dynamic_cast<const IRAllocateStack*>(&inst)) {
         emit(*a);
         return;
@@ -73,6 +87,14 @@ void IRPrinter::emit(const IRMov& m) const {
 void IRPrinter::emit(const IRUnary& u) const {
     out << "  " << toString(u.op) << " ";
     emit(*u.operand);
+    out << "\n";
+}
+
+void IRPrinter::emit(const IRBinary& b) const {
+    out << "  " << toString(b.op) << " ";
+    emit(*b.src);
+    out << ", ";
+    emit(*b.dst);
     out << "\n";
 }
 

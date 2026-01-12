@@ -19,6 +19,7 @@ private:
     void emit(const IRInstruction& inst) const;
     void emit(const IRMov& m) const;
     void emit(const IRUnary& u) const;
+    void emit(const IRBinary& b) const;
     void emit(const IRAllocateStack& a) const;
     void emit(const IRRet& r) const;
     void emit(const IROperand& v) const;

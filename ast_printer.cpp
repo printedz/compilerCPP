@@ -45,5 +45,21 @@ std::string ASTPrinter::print(const Exp& exp, int indent) {
         ss << ",\n" << print(*u->expr, indent + 1) << "\n" << ind << ")";
         return ss.str();
     }
+    if (auto* b = dynamic_cast<const Binary*>(&exp)) {
+        std::stringstream ss;
+        std::string ind = indentStr(indent);
+        const char* opStr = "?";
+        switch (b->op) {
+            case BinaryOperator::Add: opStr = "Add"; break;
+            case BinaryOperator::Sub: opStr = "Sub"; break;
+            case BinaryOperator::Mul: opStr = "Mul"; break;
+            case BinaryOperator::Div: opStr = "Div"; break;
+        }
+        ss << ind << "Binary(" << opStr << ",\n";
+        ss << print(*b->left, indent + 1) << ",\n";
+        ss << print(*b->right, indent + 1) << "\n";
+        ss << ind << ")";
+        return ss.str();
+    }
     return indentStr(indent) + "<UnknownExp>";
 }

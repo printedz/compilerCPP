@@ -14,7 +14,10 @@ enum class TokenType {
     CONSTANT,
     TILDE,      // '~' complement
     DECREMENT,  // '--' (not used by grammar, but kept for lexer completeness)
-    HYPHEN,     // '-' negate
+    HYPHEN,     // '-' negate/subtract
+    PLUS,       // '+'
+    STAR,       // '*'
+    SLASH,      // '/'
     OPEN_PAREN,
     CLOSE_PAREN,
     OPEN_BRACE,
@@ -32,8 +35,9 @@ struct Token {
 // program = Program(function_definition)
 // function_definition = Function(identifier name, statement body)
 // statement = Return(exp)
-// exp = Constant(int) | Unary(unary_operator, exp)
+// exp = Constant(int) | Unary(unary_operator, exp) | Binary(binary_operator, exp, exp)
 // unary_operator = Complement | Negate
+// binary_operator = Add | Sub | Mul | Div
 // ========================
 
 // Forward decls
@@ -44,6 +48,14 @@ struct Exp;
 enum class UnaryOperator {
     Complement, // '~'
     Negate      // '-'
+};
+
+// Binary operator kinds
+enum class BinaryOperator {
+    Add, // '+'
+    Sub, // '-'
+    Mul, // '*'
+    Div  // '/'
 };
 
 // Expressions
@@ -60,6 +72,14 @@ struct Unary : public Exp {
     UnaryOperator op;
     std::unique_ptr<Exp> expr;
     Unary(UnaryOperator o, std::unique_ptr<Exp> e) : op(o), expr(std::move(e)) {}
+};
+
+struct Binary : public Exp {
+    BinaryOperator op;
+    std::unique_ptr<Exp> left;
+    std::unique_ptr<Exp> right;
+    Binary(BinaryOperator o, std::unique_ptr<Exp> l, std::unique_ptr<Exp> r)
+        : op(o), left(std::move(l)), right(std::move(r)) {}
 };
 
 // Statements

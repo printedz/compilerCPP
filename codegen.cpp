@@ -55,6 +55,15 @@ static bool isMemoryOperand(const IROperand& op) {
         || dynamic_cast<const IRStack*>(&op) != nullptr;
 }
 
+static bool isImmediateOperand(const IROperand& op) {
+    return dynamic_cast<const IRImm*>(&op) != nullptr;
+}
+
+static bool isRegAX(const IROperand& op) {
+    auto* reg = dynamic_cast<const IRReg*>(&op);
+    return reg && reg->reg == IRRegister::AX;
+}
+
 std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
     std::stringstream ss;
     std::string funcName = mangleFuncName(func.name);
@@ -79,6 +88,9 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
             ensurePseudo(m->dst.get());
         } else if (auto* u = dynamic_cast<const IRUnary*>(instPtr.get())) {
             ensurePseudo(u->operand.get());
+        } else if (auto* b = dynamic_cast<const IRBinary*>(instPtr.get())) {
+            ensurePseudo(b->src.get());
+            ensurePseudo(b->dst.get());
         } else if (dynamic_cast<const IRAllocateStack*>(instPtr.get())) {
             hasAllocate = true;
         }
@@ -115,6 +127,44 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
         } else if (auto* u = dynamic_cast<const IRUnary*>(instPtr.get())) {
             const char* op = (u->op == IRUnaryOperator::Neg) ? "negl" : "notl";
             ss << "    " << op << " " << formatOperand(*u->operand, pseudoOffsets) << "\n";
+        } else if (auto* b = dynamic_cast<const IRBinary*>(instPtr.get())) {
+            if (b->op == IRBinaryOperator::Div) {
+                std::string dst = formatOperand(*b->dst, pseudoOffsets);
+                std::string src = formatOperand(*b->src, pseudoOffsets);
+                ss << "    movl " << dst << ", %eax\n";
+                ss << "    cdq\n";
+                if (isImmediateOperand(*b->src)) {
+                    ss << "    movl " << src << ", %r10d\n";
+                    ss << "    idivl %r10d\n";
+                } else {
+                    ss << "    idivl " << src << "\n";
+                }
+                if (!isRegAX(*b->dst)) {
+                    ss << "    movl %eax, " << dst << "\n";
+                }
+            } else {
+                const char* op = "addl";
+                switch (b->op) {
+                    case IRBinaryOperator::Add: op = "addl"; break;
+                    case IRBinaryOperator::Sub: op = "subl"; break;
+                    case IRBinaryOperator::Mul: op = "imull"; break;
+                    case IRBinaryOperator::Div: break;
+                }
+                std::string src = formatOperand(*b->src, pseudoOffsets);
+                std::string dst = formatOperand(*b->dst, pseudoOffsets);
+                if (b->op == IRBinaryOperator::Mul &&
+                    isImmediateOperand(*b->src) && isMemoryOperand(*b->dst)) {
+                    // imull imm, mem is invalid in AT&T syntax; use a temp reg.
+                    ss << "    movl " << dst << ", %r10d\n";
+                    ss << "    imull " << src << ", %r10d\n";
+                    ss << "    movl %r10d, " << dst << "\n";
+                } else if (isMemoryOperand(*b->src) && isMemoryOperand(*b->dst)) {
+                    ss << "    movl " << src << ", %r10d\n";
+                    ss << "    " << op << " %r10d, " << dst << "\n";
+                } else {
+                    ss << "    " << op << " " << src << ", " << dst << "\n";
+                }
+            }
         } else if (auto* a = dynamic_cast<const IRAllocateStack*>(instPtr.get())) {
             if (a->amount > 0) {
                 int amount = a->amount;
