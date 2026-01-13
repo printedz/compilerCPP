@@ -16,7 +16,7 @@ instruction = Mov(operand src, operand dst)
             | Binary(binary_operator, operand src, operand dst)
             | AllocateStack(int)
             | Ret
-unary_operator = Neg | Not
+unary_operator = Neg | Not | LogicalNot
 binary_operator = Add | Sub | Mul | Div | Mod
 operand = Imm(int) | Reg(reg) | Pseudo(identifier) | Stack(int)
 reg = AX | R10
@@ -24,7 +24,8 @@ reg = AX | R10
 
 enum class IRUnaryOperator {
     Neg,
-    Not
+    Not,
+    LogicalNot
 };
 
 enum class IRBinaryOperator {

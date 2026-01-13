@@ -97,14 +97,16 @@ std::unique_ptr<Exp> Parser::parseFactor() {
         return std::make_unique<Constant>(std::stoi(t.value));
     }
 
-    // Unary operators '-' or '~' applied to a factor
-    if (next.type == TokenType::HYPHEN || next.type == TokenType::TILDE) {
+    // Unary operators '-', '~', or '!' applied to a factor
+    if (next.type == TokenType::HYPHEN || next.type == TokenType::TILDE || next.type == TokenType::BANG) {
         Token opTok = takeToken(); // consume operator
         auto inner = parseFactor();
         if (opTok.type == TokenType::HYPHEN) {
             return std::make_unique<Unary>(UnaryOperator::Negate, std::move(inner));
-        } else {
+        } else if (opTok.type == TokenType::TILDE) {
             return std::make_unique<Unary>(UnaryOperator::Complement, std::move(inner));
+        } else {
+            return std::make_unique<Unary>(UnaryOperator::LogicalNot, std::move(inner));
         }
     }
 

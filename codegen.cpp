@@ -125,8 +125,20 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
                 ss << "    movl " << src << ", " << dst << "\n";
             }
         } else if (auto* u = dynamic_cast<const IRUnary*>(instPtr.get())) {
-            const char* op = (u->op == IRUnaryOperator::Neg) ? "negl" : "notl";
-            ss << "    " << op << " " << formatOperand(*u->operand, pseudoOffsets) << "\n";
+            if (u->op == IRUnaryOperator::LogicalNot) {
+                std::string operand = formatOperand(*u->operand, pseudoOffsets);
+                ss << "    cmpl $0, " << operand << "\n";
+                ss << "    sete %al\n";
+                if (isMemoryOperand(*u->operand)) {
+                    ss << "    movzbl %al, %r10d\n";
+                    ss << "    movl %r10d, " << operand << "\n";
+                } else {
+                    ss << "    movzbl %al, " << operand << "\n";
+                }
+            } else {
+                const char* op = (u->op == IRUnaryOperator::Neg) ? "negl" : "notl";
+                ss << "    " << op << " " << formatOperand(*u->operand, pseudoOffsets) << "\n";
+            }
         } else if (auto* b = dynamic_cast<const IRBinary*>(instPtr.get())) {
             if (b->op == IRBinaryOperator::Div || b->op == IRBinaryOperator::Mod) {
                 std::string dst = formatOperand(*b->dst, pseudoOffsets);

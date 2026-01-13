@@ -7,6 +7,7 @@ static const char* toString(IRUnaryOperator op) {
     switch (op) {
         case IRUnaryOperator::Neg: return "neg";
         case IRUnaryOperator::Not: return "not";
+        case IRUnaryOperator::LogicalNot: return "lnot";
     }
     return "?";
 }

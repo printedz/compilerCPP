@@ -10,6 +10,7 @@ const std::vector<Lexer::TokenDefinition>& Lexer::getTokenDefinitions() {
         {TokenType::IDENTIFIER, std::regex("^[a-zA-Z_]\\w*\\b")},
         {TokenType::CONSTANT, std::regex("^[0-9]+\\b")},
         {TokenType::TILDE, std::regex("^~")},
+        {TokenType::BANG, std::regex("^!")},
         {TokenType::DECREMENT, std::regex("^--")},
         {TokenType::HYPHEN, std::regex("^-")},
         {TokenType::PLUS, std::regex("^\\+")},

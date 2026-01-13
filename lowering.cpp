@@ -31,7 +31,12 @@ namespace {
             // mov src, dst
             instructions.push_back(std::make_unique<IRMov>(std::move(srcVal), std::move(dstVar)));
             // unary op in-place on dst
-            IRUnaryOperator op = (u->op == UnaryOperator::Complement) ? IRUnaryOperator::Not : IRUnaryOperator::Neg;
+            IRUnaryOperator op;
+            switch (u->op) {
+                case UnaryOperator::Complement: op = IRUnaryOperator::Not; break;
+                case UnaryOperator::Negate: op = IRUnaryOperator::Neg; break;
+                case UnaryOperator::LogicalNot: op = IRUnaryOperator::LogicalNot; break;
+            }
             instructions.push_back(std::make_unique<IRUnary>(op, std::move(dstVarRef)));
             // return dst (fresh operand)
             return std::make_unique<IRPseudo>(tmpName);

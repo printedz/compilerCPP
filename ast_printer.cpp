@@ -41,7 +41,13 @@ std::string ASTPrinter::print(const Exp& exp, int indent) {
         std::stringstream ss;
         std::string ind = indentStr(indent);
         ss << ind << "Unary(";
-        ss << (u->op == UnaryOperator::Complement ? "Complement" : "Negate");
+        const char* opStr = "?";
+        switch (u->op) {
+            case UnaryOperator::Complement: opStr = "Complement"; break;
+            case UnaryOperator::Negate: opStr = "Negate"; break;
+            case UnaryOperator::LogicalNot: opStr = "LogicalNot"; break;
+        }
+        ss << opStr;
         ss << ",\n" << print(*u->expr, indent + 1) << "\n" << ind << ")";
         return ss.str();
     }

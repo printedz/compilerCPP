@@ -13,6 +13,7 @@ enum class TokenType {
     IDENTIFIER,
     CONSTANT,
     TILDE,      // '~' complement
+    BANG,       // '!' logical not
     DECREMENT,  // '--' (not used by grammar, but kept for lexer completeness)
     HYPHEN,     // '-' negate/subtract
     PLUS,       // '+'
@@ -37,7 +38,7 @@ struct Token {
 // function_definition = Function(identifier name, statement body)
 // statement = Return(exp)
 // exp = Constant(int) | Unary(unary_operator, exp) | Binary(binary_operator, exp, exp)
-// unary_operator = Complement | Negate
+// unary_operator = Complement | Negate | LogicalNot
 // binary_operator = Add | Sub | Mul | Div | Mod
 // ========================
 
@@ -48,7 +49,8 @@ struct Exp;
 // Unary operator kinds
 enum class UnaryOperator {
     Complement, // '~'
-    Negate      // '-'
+    Negate,     // '-'
+    LogicalNot  // '!'
 };
 
 // Binary operator kinds
