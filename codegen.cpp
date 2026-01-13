@@ -157,12 +157,33 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
                 }
                 std::string src = formatOperand(*b->src, pseudoOffsets);
                 std::string dst = formatOperand(*b->dst, pseudoOffsets);
-                if (b->op == IRBinaryOperator::Mul &&
-                    isImmediateOperand(*b->src) && isMemoryOperand(*b->dst)) {
-                    // imull imm, mem is invalid in AT&T syntax; use a temp reg.
-                    ss << "    movl " << dst << ", %r10d\n";
-                    ss << "    imull " << src << ", %r10d\n";
-                    ss << "    movl %r10d, " << dst << "\n";
+                if (b->op == IRBinaryOperator::Mul) {
+                    if (isMemoryOperand(*b->dst)) {
+                        // Always load destination from memory into temp, multiply, store back
+                        ss << "    movl " << dst << ", %r10d\n";
+                        if (isImmediateOperand(*b->src) || isMemoryOperand(*b->src)) {
+                            // Ensure src is in a register if it's imm or memory
+                            ss << "    movl " << src << ", %eax\n";
+                            ss << "    imull %eax, %r10d\n";
+                        } else {
+                            // src is already a register
+                            ss << "    imull " << src << ", %r10d\n";
+                        }
+                        ss << "    movl %r10d, " << dst << "\n";
+                    } else {
+                        // dst is a register; we can use imull src, dst directly
+                        if (isMemoryOperand(*b->src) && isMemoryOperand(*b->dst)) {
+                            // unreachable due to dst not memory, but keep structure consistent
+                            ss << "    movl " << src << ", %r10d\n";
+                            ss << "    imull %r10d, " << dst << "\n";
+                        } else if (isImmediateOperand(*b->src) || isMemoryOperand(*b->src)) {
+                            // Some assemblers accept imull imm, reg; GAS does. Use it directly.
+                            ss << "    imull " << src << ", " << dst << "\n";
+                        } else {
+                            // src is a register; direct form
+                            ss << "    imull " << src << ", " << dst << "\n";
+                        }
+                    }
                 } else if (isMemoryOperand(*b->src) && isMemoryOperand(*b->dst)) {
                     ss << "    movl " << src << ", %r10d\n";
                     ss << "    " << op << " %r10d, " << dst << "\n";

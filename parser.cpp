@@ -83,32 +83,45 @@ std::unique_ptr<Exp> Parser::parseMulDiv() {
 }
 
 std::unique_ptr<Exp> Parser::parseUnary() {
-    if (peekToken().type == TokenType::TILDE) {
-        takeToken();
-        return std::make_unique<Unary>(UnaryOperator::Complement, parseUnary());
-    } else if (peekToken().type == TokenType::HYPHEN) {
-        takeToken();
-        return std::make_unique<Unary>(UnaryOperator::Negate, parseUnary());
-    }
-
-    return parsePrimary();
+    return parseFactor();
 }
 
-std::unique_ptr<Exp> Parser::parsePrimary() {
-    Token t = peekToken();
-    if (t.type == TokenType::OPEN_PAREN) {
-        takeToken(); // '('
+std::unique_ptr<Exp> Parser::parseFactor() {
+    // parse_factor according to grammar:
+    // <factor> ::= <int> | <unop> <factor> | "(" <exp> ")"
+    Token next = peekToken();
+
+    // Integer literal
+    if (next.type == TokenType::CONSTANT) {
+        Token t = takeToken();
+        return std::make_unique<Constant>(std::stoi(t.value));
+    }
+
+    // Unary operators '-' or '~' applied to a factor
+    if (next.type == TokenType::HYPHEN || next.type == TokenType::TILDE) {
+        Token opTok = takeToken(); // consume operator
+        auto inner = parseFactor();
+        if (opTok.type == TokenType::HYPHEN) {
+            return std::make_unique<Unary>(UnaryOperator::Negate, std::move(inner));
+        } else {
+            return std::make_unique<Unary>(UnaryOperator::Complement, std::move(inner));
+        }
+    }
+
+    // Parenthesized expression
+    if (next.type == TokenType::OPEN_PAREN) {
+        takeToken(); // consume '('
         auto inner = parseExp();
         expect(TokenType::CLOSE_PAREN);
         return inner;
     }
 
-    t = takeToken();
-    if (t.type == TokenType::CONSTANT) {
-        return std::make_unique<Constant>(std::stoi(t.value));
-    }
+    // Otherwise, it's a malformed factor
+    throw std::runtime_error("Syntax error: Malformed factor");
+}
 
-    throw std::runtime_error("Syntax error: expected expression (constant, unary, or parenthesized)");
+std::unique_ptr<Exp> Parser::parsePrimary() {
+    return parseFactor();
 }
 
 void Parser::expect(TokenType expectedType) {

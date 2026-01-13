@@ -1,3 +1,3 @@
 /Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/compiler.dir
-/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/edit_cache.dir
-/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/rebuild_cache.dir
+/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/ALL_BUILD.dir
+/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/ZERO_CHECK.dir

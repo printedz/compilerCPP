@@ -22,6 +22,7 @@ private:
     std::unique_ptr<Exp> parseAddSub();
     std::unique_ptr<Exp> parseMulDiv();
     std::unique_ptr<Exp> parseUnary();
+    std::unique_ptr<Exp> parseFactor();
     std::unique_ptr<Exp> parsePrimary();
 
     void expect(TokenType expectedType);
@@ -30,3 +31,4 @@ private:
 };
 
 #endif //COMPILER_PARSER_H
+
