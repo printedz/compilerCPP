@@ -9,6 +9,14 @@ const std::vector<Lexer::TokenDefinition>& Lexer::getTokenDefinitions() {
         {TokenType::RETURN_KEYWORD, std::regex("^return\\b")},
         {TokenType::IDENTIFIER, std::regex("^[a-zA-Z_]\\w*\\b")},
         {TokenType::CONSTANT, std::regex("^[0-9]+\\b")},
+        {TokenType::DOUBLEAND, std::regex("^&&")},
+        {TokenType::DOUBLEBAR, std::regex("^\\|\\|")},
+        {TokenType::TWOEQUAL, std::regex("^==")},
+        {TokenType::NOTEQUAL, std::regex("^!=")},
+        {TokenType::LESSEQUALTHAN, std::regex("^<=")},
+        {TokenType::GREATEREQUALTHAN, std::regex("^>=")},
+        {TokenType::LESSTHAN, std::regex("^<")},
+        {TokenType::GREATERTHAN, std::regex("^>")},
         {TokenType::TILDE, std::regex("^~")},
         {TokenType::BANG, std::regex("^!")},
         {TokenType::DECREMENT, std::regex("^--")},
@@ -30,9 +38,24 @@ std::vector<Token> Lexer::tokenize(const std::string& input) {
     std::vector<Token> tokens;
     size_t position = 0;
 
+    // Skip UTF-8 BOM if present
+    if (input.size() >= 3 && static_cast<unsigned char>(input[0]) == 0xEF &&
+        static_cast<unsigned char>(input[1]) == 0xBB &&
+        static_cast<unsigned char>(input[2]) == 0xBF) {
+        position = 3;
+    }
+
     while (position < input.length()) {
         if (std::isspace(input[position])) {
             position++;
+            continue;
+        }
+
+        // Preprocessor directives: skip entire line starting with '#'
+        if (input[position] == '#') {
+            while (position < input.length() && input[position] != '\n') {
+                position++;
+            }
             continue;
         }
 
@@ -83,3 +106,4 @@ std::vector<Token> Lexer::tokenize(const std::string& input) {
 
     return tokens;
 }
+

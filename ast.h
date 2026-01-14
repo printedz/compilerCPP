@@ -20,6 +20,15 @@ enum class TokenType {
     STAR,       // '*'
     SLASH,      // '/'
     PERCENT,    // '%'
+    EXCLAMATION,
+    DOUBLEAND,
+    DOUBLEBAR,
+    TWOEQUAL,
+    NOTEQUAL,
+    LESSTHAN,
+    GREATERTHAN,
+    LESSEQUALTHAN,
+    GREATEREQUALTHAN,
     OPEN_PAREN,
     CLOSE_PAREN,
     OPEN_BRACE,
