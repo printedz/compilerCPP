@@ -1,9 +1,9 @@
 {
   "FC3C6360B0C51A44823473620D03050AC172BE1681F9887652AC06B5B7BBF3BE": "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c|C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP\\test\\test.c|",
-  "BD950841B2D8E5E9AC85453A109B17C0AE184B0B1AB0182893CE7D28C0B97D4F": "--codegen C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c|C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c|",
   "4AABA8AD958C1D6D480AB47FC6FF59CF4DE760B8FEAB8BADAE21811089C594AF": "--codegen C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c|",
   "4DCB81E540A2570B9B6B7874BC87D3E3F981AA07F8D50F7930A1DD3223700990": "--ir C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c|",
   "E5FBFDF4F3BCC154824B0AF90171CC5DDE9FFA010CDF8B8ADAC1AC14AB32F7D9": "--lex C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c|",
   "ABC0BC815AF55BB4837E3FAE062209E17E3AE9C8302D181FCBC1FAEBAFD0B16C": "--parse C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c|",
+  "BD950841B2D8E5E9AC85453A109B17C0AE184B0B1AB0182893CE7D28C0B97D4F": "--codegen C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c|",
   "CurrentProjectSetting": "x64-Debug"
 }
