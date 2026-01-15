@@ -20,18 +20,20 @@ add_executable(compiler
         lowering.cpp
         lowering.h)
 
-add_custom_target(lex
-    COMMAND $<TARGET_FILE:compiler> --lex ${CMAKE_SOURCE_DIR}/test/test.c
-    DEPENDS compiler)
+function(add_compiler_action_target target_name action_arg)
+    add_custom_target(${target_name}
+        COMMAND $<TARGET_FILE:compiler> ${action_arg} ${CMAKE_SOURCE_DIR}/test/test.c
+        DEPENDS compiler)
 
-add_custom_target(parse
-    COMMAND $<TARGET_FILE:compiler> --parse ${CMAKE_SOURCE_DIR}/test/test.c
-    DEPENDS compiler)
+    set_target_properties(${target_name} PROPERTIES
+        XCODE_GENERATE_SCHEME TRUE
+        XCODE_SCHEME_EXECUTABLE "${CMAKE_BINARY_DIR}/Debug/compiler"
+        XCODE_SCHEME_LAUNCH_CONFIGURATION Debug
+        XCODE_SCHEME_ARGUMENTS "${action_arg};${CMAKE_SOURCE_DIR}/test/test.c"
+        XCODE_SCHEME_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+endfunction()
 
-add_custom_target(ir
-    COMMAND $<TARGET_FILE:compiler> --ir ${CMAKE_SOURCE_DIR}/test/test.c
-    DEPENDS compiler)
-
-add_custom_target(codegen
-    COMMAND $<TARGET_FILE:compiler> --codegen ${CMAKE_SOURCE_DIR}/test/test.c
-    DEPENDS compiler)
+add_compiler_action_target(lex --lex)
+add_compiler_action_target(parse --parse)
+add_compiler_action_target(ir --ir)
+add_compiler_action_target(codegen --codegen)
