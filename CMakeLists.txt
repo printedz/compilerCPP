@@ -20,26 +20,18 @@ add_executable(compiler
         lowering.cpp
         lowering.h)
 
-add_executable(run_lex main.cpp)
-set_target_properties(run_lex PROPERTIES OUTPUT_NAME "run-lex")
-add_custom_command(TARGET run_lex POST_BUILD
+add_custom_target(lex
     COMMAND $<TARGET_FILE:compiler> --lex ${CMAKE_SOURCE_DIR}/test/test.c
-)
+    DEPENDS compiler)
 
-add_executable(run_parse main.cpp)
-set_target_properties(run_parse PROPERTIES OUTPUT_NAME "run-parse")
-add_custom_command(TARGET run_parse POST_BUILD
+add_custom_target(parse
     COMMAND $<TARGET_FILE:compiler> --parse ${CMAKE_SOURCE_DIR}/test/test.c
-)
+    DEPENDS compiler)
 
-add_executable(run_ir main.cpp)
-set_target_properties(run_ir PROPERTIES OUTPUT_NAME "run-ir")
-add_custom_command(TARGET run_ir POST_BUILD
+add_custom_target(ir
     COMMAND $<TARGET_FILE:compiler> --ir ${CMAKE_SOURCE_DIR}/test/test.c
-)
+    DEPENDS compiler)
 
-add_executable(run_codegen main.cpp)
-set_target_properties(run_codegen PROPERTIES OUTPUT_NAME "run-codegen")
-add_custom_command(TARGET run_codegen POST_BUILD
+add_custom_target(codegen
     COMMAND $<TARGET_FILE:compiler> --codegen ${CMAKE_SOURCE_DIR}/test/test.c
-)
+    DEPENDS compiler)
