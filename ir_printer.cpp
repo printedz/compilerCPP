@@ -19,6 +19,12 @@ static const char* toString(IRBinaryOperator op) {
         case IRBinaryOperator::Mul: return "mul";
         case IRBinaryOperator::Div: return "div";
         case IRBinaryOperator::Mod: return "mod";
+        case IRBinaryOperator::Eq: return "eq";
+        case IRBinaryOperator::Ne: return "ne";
+        case IRBinaryOperator::Lt: return "lt";
+        case IRBinaryOperator::Le: return "le";
+        case IRBinaryOperator::Gt: return "gt";
+        case IRBinaryOperator::Ge: return "ge";
     }
     return "?";
 }
@@ -67,6 +73,22 @@ void IRPrinter::emit(const IRInstruction& inst) const {
         emit(*b);
         return;
     }
+    if (auto j = dynamic_cast<const IRJumpIfZero*>(&inst)) {
+        emit(*j);
+        return;
+    }
+    if (auto j = dynamic_cast<const IRJumpIfNotZero*>(&inst)) {
+        emit(*j);
+        return;
+    }
+    if (auto j = dynamic_cast<const IRJump*>(&inst)) {
+        emit(*j);
+        return;
+    }
+    if (auto l = dynamic_cast<const IRLabel*>(&inst)) {
+        emit(*l);
+        return;
+    }
     if (auto a = dynamic_cast<const IRAllocateStack*>(&inst)) {
         emit(*a);
         return;
@@ -98,6 +120,26 @@ void IRPrinter::emit(const IRBinary& b) const {
     out << ", ";
     emit(*b.dst);
     out << "\n";
+}
+
+void IRPrinter::emit(const IRJumpIfZero& j) const {
+    out << "  jz ";
+    emit(*j.cond);
+    out << ", " << j.target << "\n";
+}
+
+void IRPrinter::emit(const IRJumpIfNotZero& j) const {
+    out << "  jnz ";
+    emit(*j.cond);
+    out << ", " << j.target << "\n";
+}
+
+void IRPrinter::emit(const IRJump& j) const {
+    out << "  jmp " << j.target << "\n";
+}
+
+void IRPrinter::emit(const IRLabel& l) const {
+    out << "  label " << l.name << "\n";
 }
 
 void IRPrinter::emit(const IRAllocateStack& a) const {

@@ -1,7 +1,0 @@
-/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/compiler.dir
-/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/lex.dir
-/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/parse.dir
-/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/ir.dir
-/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/codegen.dir
-/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/ALL_BUILD.dir
-/Users/alejandroregidornova/Documents/compilerCPP/build/CMakeFiles/ZERO_CHECK.dir

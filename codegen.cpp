@@ -50,6 +50,13 @@ static std::string formatOperand(
     return "0(%rbp)";
 }
 
+static std::string formatLabel(const std::string& label) {
+    if (label.rfind(".L", 0) == 0) {
+        return label;
+    }
+    return ".L" + label;
+}
+
 static bool isMemoryOperand(const IROperand& op) {
     return dynamic_cast<const IRPseudo*>(&op) != nullptr
         || dynamic_cast<const IRStack*>(&op) != nullptr;
@@ -62,6 +69,32 @@ static bool isImmediateOperand(const IROperand& op) {
 static bool isRegAX(const IROperand& op) {
     auto* reg = dynamic_cast<const IRReg*>(&op);
     return reg && reg->reg == IRRegister::AX;
+}
+
+static bool isCompareOp(IRBinaryOperator op) {
+    switch (op) {
+        case IRBinaryOperator::Eq:
+        case IRBinaryOperator::Ne:
+        case IRBinaryOperator::Lt:
+        case IRBinaryOperator::Le:
+        case IRBinaryOperator::Gt:
+        case IRBinaryOperator::Ge:
+            return true;
+        default:
+            return false;
+    }
+}
+
+static const char* compareToSetcc(IRBinaryOperator op) {
+    switch (op) {
+        case IRBinaryOperator::Eq: return "sete";
+        case IRBinaryOperator::Ne: return "setne";
+        case IRBinaryOperator::Lt: return "setl";
+        case IRBinaryOperator::Le: return "setle";
+        case IRBinaryOperator::Gt: return "setg";
+        case IRBinaryOperator::Ge: return "setge";
+        default: return "sete";
+    }
 }
 
 std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
@@ -91,6 +124,10 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
         } else if (auto* b = dynamic_cast<const IRBinary*>(instPtr.get())) {
             ensurePseudo(b->src.get());
             ensurePseudo(b->dst.get());
+        } else if (auto* jz = dynamic_cast<const IRJumpIfZero*>(instPtr.get())) {
+            ensurePseudo(jz->cond.get());
+        } else if (auto* jnz = dynamic_cast<const IRJumpIfNotZero*>(instPtr.get())) {
+            ensurePseudo(jnz->cond.get());
         } else if (dynamic_cast<const IRAllocateStack*>(instPtr.get())) {
             hasAllocate = true;
         }
@@ -140,7 +177,23 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
                 ss << "    " << op << " " << formatOperand(*u->operand, pseudoOffsets) << "\n";
             }
         } else if (auto* b = dynamic_cast<const IRBinary*>(instPtr.get())) {
-            if (b->op == IRBinaryOperator::Div || b->op == IRBinaryOperator::Mod) {
+            if (isCompareOp(b->op)) {
+                std::string src = formatOperand(*b->src, pseudoOffsets);
+                std::string dst = formatOperand(*b->dst, pseudoOffsets);
+                if (isMemoryOperand(*b->src) && isMemoryOperand(*b->dst)) {
+                    ss << "    movl " << src << ", %r10d\n";
+                    ss << "    cmpl %r10d, " << dst << "\n";
+                } else {
+                    ss << "    cmpl " << src << ", " << dst << "\n";
+                }
+                ss << "    " << compareToSetcc(b->op) << " %al\n";
+                if (isMemoryOperand(*b->dst)) {
+                    ss << "    movzbl %al, %r10d\n";
+                    ss << "    movl %r10d, " << dst << "\n";
+                } else {
+                    ss << "    movzbl %al, " << dst << "\n";
+                }
+            } else if (b->op == IRBinaryOperator::Div || b->op == IRBinaryOperator::Mod) {
                 std::string dst = formatOperand(*b->dst, pseudoOffsets);
                 std::string src = formatOperand(*b->src, pseudoOffsets);
                 ss << "    movl " << dst << ", %eax\n";
@@ -203,6 +256,30 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
                     ss << "    " << op << " " << src << ", " << dst << "\n";
                 }
             }
+        } else if (auto* jz = dynamic_cast<const IRJumpIfZero*>(instPtr.get())) {
+            std::string target = formatLabel(jz->target);
+            if (isImmediateOperand(*jz->cond)) {
+                std::string cond = formatOperand(*jz->cond, pseudoOffsets);
+                ss << "    movl " << cond << ", %r10d\n";
+                ss << "    cmpl $0, %r10d\n";
+            } else {
+                ss << "    cmpl $0, " << formatOperand(*jz->cond, pseudoOffsets) << "\n";
+            }
+            ss << "    je " << target << "\n";
+        } else if (auto* jnz = dynamic_cast<const IRJumpIfNotZero*>(instPtr.get())) {
+            std::string target = formatLabel(jnz->target);
+            if (isImmediateOperand(*jnz->cond)) {
+                std::string cond = formatOperand(*jnz->cond, pseudoOffsets);
+                ss << "    movl " << cond << ", %r10d\n";
+                ss << "    cmpl $0, %r10d\n";
+            } else {
+                ss << "    cmpl $0, " << formatOperand(*jnz->cond, pseudoOffsets) << "\n";
+            }
+            ss << "    jne " << target << "\n";
+        } else if (auto* j = dynamic_cast<const IRJump*>(instPtr.get())) {
+            ss << "    jmp " << formatLabel(j->target) << "\n";
+        } else if (auto* l = dynamic_cast<const IRLabel*>(instPtr.get())) {
+            ss << formatLabel(l->name) << ":\n";
         } else if (auto* a = dynamic_cast<const IRAllocateStack*>(instPtr.get())) {
             if (a->amount > 0) {
                 int amount = a->amount;

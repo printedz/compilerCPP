@@ -13,6 +13,10 @@ namespace {
         static int counter = 0;
         return "t" + std::to_string(counter++);
     }
+    static std::string freshLabelName() {
+        static int counter = 0;
+        return "L" + std::to_string(counter++);
+    }
     // Lower an Exp to an assembly operand, appending instructions as needed.
     static std::unique_ptr<IROperand> emitTacky(
         const Exp& e,
@@ -39,6 +43,43 @@ namespace {
             return std::make_unique<IRPseudo>(tmpName);
         }
         if (auto b = dynamic_cast<const Binary*>(&e)) {
+            if (b->op == BinaryOperator::And || b->op == BinaryOperator::Or) {
+                std::string tmpName = freshTempName();
+                pseudos.insert(tmpName);
+                auto resultVar = std::make_unique<IRPseudo>(tmpName);
+                auto resultVarRef = std::make_unique<IRPseudo>(tmpName);
+
+                std::string shortLabel = freshLabelName();
+                std::string endLabel = freshLabelName();
+
+                auto leftVal = emitTacky(*b->left, instructions, pseudos);
+                if (b->op == BinaryOperator::And) {
+                    instructions.push_back(std::make_unique<IRJumpIfZero>(std::move(leftVal), shortLabel));
+                } else {
+                    instructions.push_back(std::make_unique<IRJumpIfNotZero>(std::move(leftVal), shortLabel));
+                }
+
+                auto rightVal = emitTacky(*b->right, instructions, pseudos);
+                if (b->op == BinaryOperator::And) {
+                    instructions.push_back(std::make_unique<IRJumpIfZero>(std::move(rightVal), shortLabel));
+                    instructions.push_back(std::make_unique<IRMov>(std::make_unique<IRImm>(1), std::move(resultVar)));
+                } else {
+                    instructions.push_back(std::make_unique<IRJumpIfNotZero>(std::move(rightVal), shortLabel));
+                    instructions.push_back(std::make_unique<IRMov>(std::make_unique<IRImm>(0), std::move(resultVar)));
+                }
+
+                instructions.push_back(std::make_unique<IRJump>(endLabel));
+                instructions.push_back(std::make_unique<IRLabel>(shortLabel));
+                if (b->op == BinaryOperator::And) {
+                    instructions.push_back(std::make_unique<IRMov>(std::make_unique<IRImm>(0), std::move(resultVarRef)));
+                } else {
+                    instructions.push_back(std::make_unique<IRMov>(std::make_unique<IRImm>(1), std::move(resultVarRef)));
+                }
+                instructions.push_back(std::make_unique<IRLabel>(endLabel));
+
+                return std::make_unique<IRPseudo>(tmpName);
+            }
+
             auto leftVal = emitTacky(*b->left, instructions, pseudos);
             auto rightVal = emitTacky(*b->right, instructions, pseudos);
             std::string tmpName = freshTempName();
@@ -53,6 +94,12 @@ namespace {
             case BinaryOperator::Mul: op = IRBinaryOperator::Mul; break;
             case BinaryOperator::Div: op = IRBinaryOperator::Div; break;
             case BinaryOperator::Mod: op = IRBinaryOperator::Mod; break;
+            case BinaryOperator::Equal: op = IRBinaryOperator::Eq; break;
+            case BinaryOperator::NotEqual: op = IRBinaryOperator::Ne; break;
+            case BinaryOperator::LessThan: op = IRBinaryOperator::Lt; break;
+            case BinaryOperator::LessOrEqual: op = IRBinaryOperator::Le; break;
+            case BinaryOperator::GreaterThan: op = IRBinaryOperator::Gt; break;
+            case BinaryOperator::GreaterOrEqual: op = IRBinaryOperator::Ge; break;
             default: throw std::runtime_error("Unsupported binary operator");
             }
             instructions.push_back(std::make_unique<IRBinary>(op, std::move(rightVal), std::move(dstVarRef)));

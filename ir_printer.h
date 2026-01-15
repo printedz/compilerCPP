@@ -20,6 +20,10 @@ private:
     void emit(const IRMov& m) const;
     void emit(const IRUnary& u) const;
     void emit(const IRBinary& b) const;
+    void emit(const IRJumpIfZero& j) const;
+    void emit(const IRJumpIfNotZero& j) const;
+    void emit(const IRJump& j) const;
+    void emit(const IRLabel& l) const;
     void emit(const IRAllocateStack& a) const;
     void emit(const IRRet& r) const;
     void emit(const IROperand& v) const;
