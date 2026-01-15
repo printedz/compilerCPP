@@ -19,3 +19,19 @@ add_executable(compiler
         ir_printer.h
         lowering.cpp
         lowering.h)
+
+add_custom_target(lex
+    COMMAND $<TARGET_FILE:compiler> --lex ${CMAKE_SOURCE_DIR}/test/test.c
+    DEPENDS compiler)
+
+add_custom_target(parse
+    COMMAND $<TARGET_FILE:compiler> --parse ${CMAKE_SOURCE_DIR}/test/test.c
+    DEPENDS compiler)
+
+add_custom_target(ir
+    COMMAND $<TARGET_FILE:compiler> --ir ${CMAKE_SOURCE_DIR}/test/test.c
+    DEPENDS compiler)
+
+add_custom_target(codegen
+    COMMAND $<TARGET_FILE:compiler> --codegen ${CMAKE_SOURCE_DIR}/test/test.c
+    DEPENDS compiler)

@@ -1,0 +1,81 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "compiler.exe",
+      "name": "compiler.exe",
+      "workingDirectory": "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\out\\build\\x64-Debug",
+      "commandLineArgs": [
+        "--codegen",
+        "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c"
+      ],
+      "args": [
+        "--codegen",
+        "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c"
+      ]
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "compiler.exe",
+      "name": "lex",
+      "workingDirectory": "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\out\\build\\x64-Debug",
+      "commandLineArgs": [
+        "--lex",
+        "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c"
+      ],
+      "args": [
+        "--lex",
+        "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c"
+      ]
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "compiler.exe",
+      "name": "parse",
+      "workingDirectory": "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\out\\build\\x64-Debug",
+      "commandLineArgs": [
+        "--parse",
+        "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c"
+      ],
+      "args": [
+        "--parse",
+        "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c"
+      ]
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "compiler.exe",
+      "name": "ir",
+      "workingDirectory": "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\out\\build\\x64-Debug",
+      "commandLineArgs": [
+        "--ir",
+        "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c"
+      ],
+      "args": [
+        "--ir",
+        "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c"
+      ]
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "compiler.exe",
+      "name": "codegen",
+      "workingDirectory": "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\out\\build\\x64-Debug",
+      "commandLineArgs": [
+        "--codegen",
+        "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c"
+      ],
+      "args": [
+        "--codegen",
+        "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c"
+      ]
+    }
+  ]
+}
