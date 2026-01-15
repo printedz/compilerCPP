@@ -1,0 +1,4 @@
+# RATON C COMPILER
+## BY ALEJANDRO REGIDOR
+### SUPPORTS WINDOWS, MACOS AND GNU/LINUX (FOR NOW A TINY C99 SUBSET)
+It's a work in progress! Feel free to colaborate :)
