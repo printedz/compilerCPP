@@ -26,7 +26,7 @@ instruction = Mov(operand src, operand dst)
 unary_operator = Neg | Not
 binary_operator = Add | Sub | Mul
 operand = Imm(int) | Reg(reg) | Pseudo(identifier) | Stack(int)
-reg = AX | R10 | DX
+reg = AX | DX | R10 | R11
 cond_code = E | NE | G | GE | L | LE
 */
 
@@ -43,8 +43,9 @@ enum class IRBinaryOperator {
 
 enum class IRRegister {
     AX,
+    DX,
     R10,
-    DX
+    R11
 };
 
 enum class IRCondCode {

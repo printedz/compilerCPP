@@ -14,7 +14,7 @@
       ],
       "args": [
         "--codegen",
-        "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c"
+        "C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP\\test\\test.c"
       ]
     },
     {

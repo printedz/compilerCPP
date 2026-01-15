@@ -35,8 +35,9 @@ static const char* toString(IRCondCode cond) {
 static const char* toString(IRRegister reg) {
     switch (reg) {
         case IRRegister::AX: return "%eax";
-        case IRRegister::R10: return "%r10d";
         case IRRegister::DX: return "%edx";
+        case IRRegister::R10: return "%r10d";
+        case IRRegister::R11: return "%r11d";
     }
     return "%?";
 }

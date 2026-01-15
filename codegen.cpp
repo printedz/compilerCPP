@@ -25,10 +25,21 @@ std::string CodeGenerator::generate(const Program& program) {
 static const char* regToAsm32(IRRegister reg) {
     switch (reg) {
         case IRRegister::AX: return "%eax";
-        case IRRegister::R10: return "%r10d";
         case IRRegister::DX: return "%edx";
+        case IRRegister::R10: return "%r10d";
+        case IRRegister::R11: return "%r11d";
     }
     return "%eax";
+}
+
+static const char* regToAsm8(IRRegister reg) {
+    switch (reg) {
+        case IRRegister::AX: return "%al";
+        case IRRegister::DX: return "%dl";
+        case IRRegister::R10: return "%r10b";
+        case IRRegister::R11: return "%r11b";
+    }
+    return "%al";
 }
 
 static std::string formatOperand(
@@ -194,7 +205,10 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
         } else if (auto* c = dynamic_cast<const IRCmp*>(instPtr.get())) {
             std::string src = formatOperand(*c->src, pseudoOffsets);
             std::string dst = formatOperand(*c->dst, pseudoOffsets);
-            if (isMemoryOperand(*c->src) && isMemoryOperand(*c->dst)) {
+            if (isImmediateOperand(*c->dst)) {
+                ss << "    movl " << dst << ", %r11d\n";
+                ss << "    cmpl " << src << ", %r11d\n";
+            } else if (isMemoryOperand(*c->src) && isMemoryOperand(*c->dst)) {
                 ss << "    movl " << src << ", %r10d\n";
                 ss << "    cmpl %r10d, " << dst << "\n";
             } else {
@@ -215,13 +229,11 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
         } else if (auto* j = dynamic_cast<const IRJumpCC*>(instPtr.get())) {
             ss << "    j" << condToSuffix(j->cond) << " " << formatLabel(j->target) << "\n";
         } else if (auto* s = dynamic_cast<const IRSetCC*>(instPtr.get())) {
-            std::string dst = formatOperand(*s->dst, pseudoOffsets);
-            ss << "    set" << condToSuffix(s->cond) << " %al\n";
-            if (isMemoryOperand(*s->dst)) {
-                ss << "    movzbl %al, %r10d\n";
-                ss << "    movl %r10d, " << dst << "\n";
+            if (auto* reg = dynamic_cast<const IRReg*>(s->dst.get())) {
+                ss << "    set" << condToSuffix(s->cond) << " " << regToAsm8(reg->reg) << "\n";
             } else {
-                ss << "    movzbl %al, " << dst << "\n";
+                std::string dst = formatOperand(*s->dst, pseudoOffsets);
+                ss << "    set" << condToSuffix(s->cond) << " " << dst << "\n";
             }
         } else if (auto* l = dynamic_cast<const IRLabel*>(instPtr.get())) {
             ss << formatLabel(l->name) << ":\n";

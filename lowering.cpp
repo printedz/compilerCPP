@@ -47,6 +47,7 @@ namespace {
                 auto dstVar = std::make_unique<IRPseudo>(tmpName);
                 auto cmpDst = ensureCmpDst(std::move(srcVal));
                 instructions.push_back(std::make_unique<IRCmp>(std::make_unique<IRImm>(0), std::move(cmpDst)));
+                instructions.push_back(std::make_unique<IRMov>(std::make_unique<IRImm>(0), std::make_unique<IRPseudo>(tmpName)));
                 instructions.push_back(std::make_unique<IRSetCC>(IRCondCode::E, std::move(dstVar)));
                 return std::make_unique<IRPseudo>(tmpName);
             }
@@ -152,6 +153,7 @@ namespace {
                 auto resultVar = std::make_unique<IRPseudo>(tmpName);
                 auto cmpDst = ensureCmpDst(std::move(leftVal));
                 instructions.push_back(std::make_unique<IRCmp>(std::move(rightVal), std::move(cmpDst)));
+                instructions.push_back(std::make_unique<IRMov>(std::make_unique<IRImm>(0), std::make_unique<IRPseudo>(tmpName)));
                 instructions.push_back(std::make_unique<IRSetCC>(cond, std::move(resultVar)));
                 return std::make_unique<IRPseudo>(tmpName);
             }
