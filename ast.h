@@ -47,8 +47,10 @@ struct Token {
 // function_definition = Function(identifier name, statement body)
 // statement = Return(exp)
 // exp = Constant(int) | Unary(unary_operator, exp) | Binary(binary_operator, exp, exp)
-// unary_operator = Complement | Negate | LogicalNot
-// binary_operator = Add | Sub | Mul | Div | Mod
+// unary_operator = Complement | Negate | Not
+// binary_operator = Add | Subtract | Multiply | Divide | Remainder | And | Or
+//                | Equal | NotEqual | LessThan | LessOrEqual
+//                | GreaterThan | GreaterOrEqual
 // ========================
 
 // Forward decls
@@ -59,16 +61,29 @@ struct Exp;
 enum class UnaryOperator {
     Complement, // '~'
     Negate,     // '-'
-    LogicalNot  // '!'
+    Not,        // '!'
+    LogicalNot = Not // backward-compatible alias
 };
 
 // Binary operator kinds
 enum class BinaryOperator {
-    Add, // '+'
-    Sub, // '-'
-    Mul, // '*'
-    Div, // '/'
-    Mod  // '%'
+    Add,        // '+'
+    Subtract,   // '-'
+    Sub = Subtract, // alias for older name
+    Multiply,   // '*'
+    Mul = Multiply, // alias
+    Divide,     // '/'
+    Div = Divide, // alias
+    Remainder,  // '%'
+    Mod = Remainder, // alias
+    And,        // '&&'
+    Or,         // '||'
+    Equal,      // '=='
+    NotEqual,   // '!='
+    LessThan,   // '<'
+    LessOrEqual,// '<='
+    GreaterThan,// '>'
+    GreaterOrEqual // '>='
 };
 
 // Expressions

@@ -19,6 +19,10 @@ private:
     std::unique_ptr<Statement> parseStatement();
     std::unique_ptr<Return> parseReturn();
     std::unique_ptr<Exp> parseExp();
+    std::unique_ptr<Exp> parseOr();
+    std::unique_ptr<Exp> parseAnd();
+    std::unique_ptr<Exp> parseEquality();
+    std::unique_ptr<Exp> parseRelational();
     std::unique_ptr<Exp> parseAddSub();
     std::unique_ptr<Exp> parseMulDiv();
     std::unique_ptr<Exp> parseUnary();

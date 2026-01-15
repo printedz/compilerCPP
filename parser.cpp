@@ -47,8 +47,67 @@ std::unique_ptr<Return> Parser::parseReturn() {
     return std::make_unique<Return>(std::move(e));
 }
 
+// Top-level entry for expressions
 std::unique_ptr<Exp> Parser::parseExp() {
-    return parseAddSub();
+    return parseOr();
+}
+
+// Precedence climbing by layered parsing functions:
+// OR (||) -> AND (&&) -> Equality (==, !=) -> Relational (<, <=, >, >=)
+// -> Add/Sub -> Mul/Div/Mod -> Unary -> Primary
+
+std::unique_ptr<Exp> Parser::parseOr() {
+    auto left = parseAnd();
+    while (peekToken().type == TokenType::DOUBLEBAR) {
+        takeToken(); // consume '||'
+        auto right = parseAnd();
+        left = std::make_unique<Binary>(BinaryOperator::Or, std::move(left), std::move(right));
+    }
+    return left;
+}
+
+std::unique_ptr<Exp> Parser::parseAnd() {
+    auto left = parseEquality();
+    while (peekToken().type == TokenType::DOUBLEAND) {
+        takeToken(); // consume '&&'
+        auto right = parseEquality();
+        left = std::make_unique<Binary>(BinaryOperator::And, std::move(left), std::move(right));
+    }
+    return left;
+}
+
+std::unique_ptr<Exp> Parser::parseEquality() {
+    auto left = parseRelational();
+    while (peekToken().type == TokenType::TWOEQUAL || peekToken().type == TokenType::NOTEQUAL) {
+        Token op = takeToken();
+        auto right = parseRelational();
+        BinaryOperator binOp = (op.type == TokenType::TWOEQUAL) ? BinaryOperator::Equal : BinaryOperator::NotEqual;
+        left = std::make_unique<Binary>(binOp, std::move(left), std::move(right));
+    }
+    return left;
+}
+
+std::unique_ptr<Exp> Parser::parseRelational() {
+    auto left = parseAddSub();
+    while (peekToken().type == TokenType::LESSTHAN
+        || peekToken().type == TokenType::LESSEQUALTHAN
+        || peekToken().type == TokenType::GREATERTHAN
+        || peekToken().type == TokenType::GREATEREQUALTHAN) {
+        Token op = takeToken();
+        auto right = parseAddSub();
+        BinaryOperator binOp = BinaryOperator::LessThan;
+        if (op.type == TokenType::LESSTHAN) {
+            binOp = BinaryOperator::LessThan;
+        } else if (op.type == TokenType::LESSEQUALTHAN) {
+            binOp = BinaryOperator::LessOrEqual;
+        } else if (op.type == TokenType::GREATERTHAN) {
+            binOp = BinaryOperator::GreaterThan;
+        } else if (op.type == TokenType::GREATEREQUALTHAN) {
+            binOp = BinaryOperator::GreaterOrEqual;
+        }
+        left = std::make_unique<Binary>(binOp, std::move(left), std::move(right));
+    }
+    return left;
 }
 
 std::unique_ptr<Exp> Parser::parseAddSub() {
@@ -56,7 +115,7 @@ std::unique_ptr<Exp> Parser::parseAddSub() {
     while (peekToken().type == TokenType::PLUS || peekToken().type == TokenType::HYPHEN) {
         Token op = takeToken();
         auto right = parseMulDiv();
-        BinaryOperator binOp = (op.type == TokenType::PLUS) ? BinaryOperator::Add : BinaryOperator::Sub;
+        BinaryOperator binOp = (op.type == TokenType::PLUS) ? BinaryOperator::Add : BinaryOperator::Subtract;
         left = std::make_unique<Binary>(binOp, std::move(left), std::move(right));
     }
     return left;
@@ -69,13 +128,13 @@ std::unique_ptr<Exp> Parser::parseMulDiv() {
         || peekToken().type == TokenType::PERCENT) {
         Token op = takeToken();
         auto right = parseUnary();
-        BinaryOperator binOp = BinaryOperator::Div;
+        BinaryOperator binOp = BinaryOperator::Divide;
         if (op.type == TokenType::STAR) {
-            binOp = BinaryOperator::Mul;
+            binOp = BinaryOperator::Multiply;
         } else if (op.type == TokenType::SLASH) {
-            binOp = BinaryOperator::Div;
+            binOp = BinaryOperator::Divide;
         } else {
-            binOp = BinaryOperator::Mod;
+            binOp = BinaryOperator::Remainder;
         }
         left = std::make_unique<Binary>(binOp, std::move(left), std::move(right));
     }
@@ -83,31 +142,30 @@ std::unique_ptr<Exp> Parser::parseMulDiv() {
 }
 
 std::unique_ptr<Exp> Parser::parseUnary() {
+    Token next = peekToken();
+    if (next.type == TokenType::HYPHEN || next.type == TokenType::TILDE || next.type == TokenType::BANG || next.type == TokenType::EXCLAMATION) {
+        Token opTok = takeToken(); // consume operator
+        auto inner = parseUnary(); // right-associative unary
+        if (opTok.type == TokenType::HYPHEN) {
+            return std::make_unique<Unary>(UnaryOperator::Negate, std::move(inner));
+        } else if (opTok.type == TokenType::TILDE) {
+            return std::make_unique<Unary>(UnaryOperator::Complement, std::move(inner));
+        } else {
+            return std::make_unique<Unary>(UnaryOperator::Not, std::move(inner));
+        }
+    }
     return parseFactor();
 }
 
 std::unique_ptr<Exp> Parser::parseFactor() {
     // parse_factor according to grammar:
-    // <factor> ::= <int> | <unop> <factor> | "(" <exp> ")"
+    // <factor> ::= <int> | "(" <exp> ")"
     Token next = peekToken();
 
     // Integer literal
     if (next.type == TokenType::CONSTANT) {
         Token t = takeToken();
         return std::make_unique<Constant>(std::stoi(t.value));
-    }
-
-    // Unary operators '-', '~', or '!' applied to a factor
-    if (next.type == TokenType::HYPHEN || next.type == TokenType::TILDE || next.type == TokenType::BANG) {
-        Token opTok = takeToken(); // consume operator
-        auto inner = parseFactor();
-        if (opTok.type == TokenType::HYPHEN) {
-            return std::make_unique<Unary>(UnaryOperator::Negate, std::move(inner));
-        } else if (opTok.type == TokenType::TILDE) {
-            return std::make_unique<Unary>(UnaryOperator::Complement, std::move(inner));
-        } else {
-            return std::make_unique<Unary>(UnaryOperator::LogicalNot, std::move(inner));
-        }
     }
 
     // Parenthesized expression
