@@ -14,42 +14,46 @@ function_definition = Function(identifier name, instruction* instructions)
 instruction = Mov(operand src, operand dst)
             | Unary(unary_operator, operand)
             | Binary(binary_operator, operand src, operand dst)
-            | JumpIfZero(operand, label)
-            | JumpIfNotZero(operand, label)
+            | Cmp(operand, operand)
+            | Idiv(operand)
+            | Cdq
             | Jump(label)
+            | JumpCC(cond_code, label)
+            | SetCC(cond_code, operand)
             | Label(label)
             | AllocateStack(int)
             | Ret
-unary_operator = Neg | Not | LogicalNot
-binary_operator = Add | Sub | Mul | Div | Mod
-               | Eq | Ne | Lt | Le | Gt | Ge
+unary_operator = Neg | Not
+binary_operator = Add | Sub | Mul
 operand = Imm(int) | Reg(reg) | Pseudo(identifier) | Stack(int)
-reg = AX | R10
+reg = AX | R10 | DX
+cond_code = E | NE | G | GE | L | LE
 */
 
 enum class IRUnaryOperator {
     Neg,
-    Not,
-    LogicalNot
+    Not
 };
 
 enum class IRBinaryOperator {
     Add,
     Sub,
-    Mul,
-    Div,
-    Mod,
-    Eq,
-    Ne,
-    Lt,
-    Le,
-    Gt,
-    Ge
+    Mul
 };
 
 enum class IRRegister {
     AX,
-    R10
+    R10,
+    DX
+};
+
+enum class IRCondCode {
+    E,
+    NE,
+    G,
+    GE,
+    L,
+    LE
 };
 
 struct IROperand {
@@ -102,23 +106,37 @@ struct IRBinary : public IRInstruction {
         : op(o), src(std::move(s)), dst(std::move(d)) {}
 };
 
-struct IRJumpIfZero : public IRInstruction {
-    std::unique_ptr<IROperand> cond;
-    std::string target;
-    IRJumpIfZero(std::unique_ptr<IROperand> c, std::string t)
-        : cond(std::move(c)), target(std::move(t)) {}
+struct IRCmp : public IRInstruction {
+    std::unique_ptr<IROperand> src;
+    std::unique_ptr<IROperand> dst;
+    IRCmp(std::unique_ptr<IROperand> s, std::unique_ptr<IROperand> d)
+        : src(std::move(s)), dst(std::move(d)) {}
 };
 
-struct IRJumpIfNotZero : public IRInstruction {
-    std::unique_ptr<IROperand> cond;
-    std::string target;
-    IRJumpIfNotZero(std::unique_ptr<IROperand> c, std::string t)
-        : cond(std::move(c)), target(std::move(t)) {}
+struct IRIdiv : public IRInstruction {
+    std::unique_ptr<IROperand> divisor;
+    explicit IRIdiv(std::unique_ptr<IROperand> d) : divisor(std::move(d)) {}
+};
+
+struct IRCdq : public IRInstruction {
 };
 
 struct IRJump : public IRInstruction {
     std::string target;
     explicit IRJump(std::string t) : target(std::move(t)) {}
+};
+
+struct IRJumpCC : public IRInstruction {
+    IRCondCode cond;
+    std::string target;
+    IRJumpCC(IRCondCode c, std::string t) : cond(c), target(std::move(t)) {}
+};
+
+struct IRSetCC : public IRInstruction {
+    IRCondCode cond;
+    std::unique_ptr<IROperand> dst;
+    IRSetCC(IRCondCode c, std::unique_ptr<IROperand> d)
+        : cond(c), dst(std::move(d)) {}
 };
 
 struct IRLabel : public IRInstruction {

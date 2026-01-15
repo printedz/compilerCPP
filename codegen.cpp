@@ -26,6 +26,7 @@ static const char* regToAsm32(IRRegister reg) {
     switch (reg) {
         case IRRegister::AX: return "%eax";
         case IRRegister::R10: return "%r10d";
+        case IRRegister::DX: return "%edx";
     }
     return "%eax";
 }
@@ -66,35 +67,16 @@ static bool isImmediateOperand(const IROperand& op) {
     return dynamic_cast<const IRImm*>(&op) != nullptr;
 }
 
-static bool isRegAX(const IROperand& op) {
-    auto* reg = dynamic_cast<const IRReg*>(&op);
-    return reg && reg->reg == IRRegister::AX;
-}
-
-static bool isCompareOp(IRBinaryOperator op) {
-    switch (op) {
-        case IRBinaryOperator::Eq:
-        case IRBinaryOperator::Ne:
-        case IRBinaryOperator::Lt:
-        case IRBinaryOperator::Le:
-        case IRBinaryOperator::Gt:
-        case IRBinaryOperator::Ge:
-            return true;
-        default:
-            return false;
+static const char* condToSuffix(IRCondCode cond) {
+    switch (cond) {
+        case IRCondCode::E: return "e";
+        case IRCondCode::NE: return "ne";
+        case IRCondCode::G: return "g";
+        case IRCondCode::GE: return "ge";
+        case IRCondCode::L: return "l";
+        case IRCondCode::LE: return "le";
     }
-}
-
-static const char* compareToSetcc(IRBinaryOperator op) {
-    switch (op) {
-        case IRBinaryOperator::Eq: return "sete";
-        case IRBinaryOperator::Ne: return "setne";
-        case IRBinaryOperator::Lt: return "setl";
-        case IRBinaryOperator::Le: return "setle";
-        case IRBinaryOperator::Gt: return "setg";
-        case IRBinaryOperator::Ge: return "setge";
-        default: return "sete";
-    }
+    return "e";
 }
 
 std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
@@ -124,10 +106,13 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
         } else if (auto* b = dynamic_cast<const IRBinary*>(instPtr.get())) {
             ensurePseudo(b->src.get());
             ensurePseudo(b->dst.get());
-        } else if (auto* jz = dynamic_cast<const IRJumpIfZero*>(instPtr.get())) {
-            ensurePseudo(jz->cond.get());
-        } else if (auto* jnz = dynamic_cast<const IRJumpIfNotZero*>(instPtr.get())) {
-            ensurePseudo(jnz->cond.get());
+        } else if (auto* c = dynamic_cast<const IRCmp*>(instPtr.get())) {
+            ensurePseudo(c->src.get());
+            ensurePseudo(c->dst.get());
+        } else if (auto* d = dynamic_cast<const IRIdiv*>(instPtr.get())) {
+            ensurePseudo(d->divisor.get());
+        } else if (auto* s = dynamic_cast<const IRSetCC*>(instPtr.get())) {
+            ensurePseudo(s->dst.get());
         } else if (dynamic_cast<const IRAllocateStack*>(instPtr.get())) {
             hasAllocate = true;
         }
@@ -162,122 +147,82 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
                 ss << "    movl " << src << ", " << dst << "\n";
             }
         } else if (auto* u = dynamic_cast<const IRUnary*>(instPtr.get())) {
-            if (u->op == IRUnaryOperator::LogicalNot) {
-                std::string operand = formatOperand(*u->operand, pseudoOffsets);
-                ss << "    cmpl $0, " << operand << "\n";
-                ss << "    sete %al\n";
-                if (isMemoryOperand(*u->operand)) {
-                    ss << "    movzbl %al, %r10d\n";
-                    ss << "    movl %r10d, " << operand << "\n";
-                } else {
-                    ss << "    movzbl %al, " << operand << "\n";
-                }
-            } else {
-                const char* op = (u->op == IRUnaryOperator::Neg) ? "negl" : "notl";
-                ss << "    " << op << " " << formatOperand(*u->operand, pseudoOffsets) << "\n";
-            }
+            const char* op = (u->op == IRUnaryOperator::Neg) ? "negl" : "notl";
+            ss << "    " << op << " " << formatOperand(*u->operand, pseudoOffsets) << "\n";
         } else if (auto* b = dynamic_cast<const IRBinary*>(instPtr.get())) {
-            if (isCompareOp(b->op)) {
-                std::string src = formatOperand(*b->src, pseudoOffsets);
-                std::string dst = formatOperand(*b->dst, pseudoOffsets);
-                if (isMemoryOperand(*b->src) && isMemoryOperand(*b->dst)) {
-                    ss << "    movl " << src << ", %r10d\n";
-                    ss << "    cmpl %r10d, " << dst << "\n";
-                } else {
-                    ss << "    cmpl " << src << ", " << dst << "\n";
-                }
-                ss << "    " << compareToSetcc(b->op) << " %al\n";
+            const char* op = "addl";
+            switch (b->op) {
+                case IRBinaryOperator::Add: op = "addl"; break;
+                case IRBinaryOperator::Sub: op = "subl"; break;
+                case IRBinaryOperator::Mul: op = "imull"; break;
+            }
+            std::string src = formatOperand(*b->src, pseudoOffsets);
+            std::string dst = formatOperand(*b->dst, pseudoOffsets);
+            if (b->op == IRBinaryOperator::Mul) {
                 if (isMemoryOperand(*b->dst)) {
-                    ss << "    movzbl %al, %r10d\n";
+                    // Always load destination from memory into temp, multiply, store back
+                    ss << "    movl " << dst << ", %r10d\n";
+                    if (isImmediateOperand(*b->src) || isMemoryOperand(*b->src)) {
+                        // Ensure src is in a register if it's imm or memory
+                        ss << "    movl " << src << ", %eax\n";
+                        ss << "    imull %eax, %r10d\n";
+                    } else {
+                        // src is already a register
+                        ss << "    imull " << src << ", %r10d\n";
+                    }
                     ss << "    movl %r10d, " << dst << "\n";
                 } else {
-                    ss << "    movzbl %al, " << dst << "\n";
-                }
-            } else if (b->op == IRBinaryOperator::Div || b->op == IRBinaryOperator::Mod) {
-                std::string dst = formatOperand(*b->dst, pseudoOffsets);
-                std::string src = formatOperand(*b->src, pseudoOffsets);
-                ss << "    movl " << dst << ", %eax\n";
-                ss << "    cdq\n";
-                if (isImmediateOperand(*b->src)) {
-                    ss << "    movl " << src << ", %r10d\n";
-                    ss << "    idivl %r10d\n";
-                } else {
-                    ss << "    idivl " << src << "\n";
-                }
-                if (b->op == IRBinaryOperator::Div) {
-                    if (!isRegAX(*b->dst)) {
-                        ss << "    movl %eax, " << dst << "\n";
-                    }
-                } else {
-                    ss << "    movl %edx, " << dst << "\n";
-                }
-            } else {
-                const char* op = "addl";
-                switch (b->op) {
-                    case IRBinaryOperator::Add: op = "addl"; break;
-                    case IRBinaryOperator::Sub: op = "subl"; break;
-                    case IRBinaryOperator::Mul: op = "imull"; break;
-                    case IRBinaryOperator::Div: break;
-                    case IRBinaryOperator::Mod: break;
-                }
-                std::string src = formatOperand(*b->src, pseudoOffsets);
-                std::string dst = formatOperand(*b->dst, pseudoOffsets);
-                if (b->op == IRBinaryOperator::Mul) {
-                    if (isMemoryOperand(*b->dst)) {
-                        // Always load destination from memory into temp, multiply, store back
-                        ss << "    movl " << dst << ", %r10d\n";
-                        if (isImmediateOperand(*b->src) || isMemoryOperand(*b->src)) {
-                            // Ensure src is in a register if it's imm or memory
-                            ss << "    movl " << src << ", %eax\n";
-                            ss << "    imull %eax, %r10d\n";
-                        } else {
-                            // src is already a register
-                            ss << "    imull " << src << ", %r10d\n";
-                        }
-                        ss << "    movl %r10d, " << dst << "\n";
+                    // dst is a register; we can use imull src, dst directly
+                    if (isMemoryOperand(*b->src) && isMemoryOperand(*b->dst)) {
+                        // unreachable due to dst not memory, but keep structure consistent
+                        ss << "    movl " << src << ", %r10d\n";
+                        ss << "    imull %r10d, " << dst << "\n";
+                    } else if (isImmediateOperand(*b->src) || isMemoryOperand(*b->src)) {
+                        // Some assemblers accept imull imm, reg; GAS does. Use it directly.
+                        ss << "    imull " << src << ", " << dst << "\n";
                     } else {
-                        // dst is a register; we can use imull src, dst directly
-                        if (isMemoryOperand(*b->src) && isMemoryOperand(*b->dst)) {
-                            // unreachable due to dst not memory, but keep structure consistent
-                            ss << "    movl " << src << ", %r10d\n";
-                            ss << "    imull %r10d, " << dst << "\n";
-                        } else if (isImmediateOperand(*b->src) || isMemoryOperand(*b->src)) {
-                            // Some assemblers accept imull imm, reg; GAS does. Use it directly.
-                            ss << "    imull " << src << ", " << dst << "\n";
-                        } else {
-                            // src is a register; direct form
-                            ss << "    imull " << src << ", " << dst << "\n";
-                        }
+                        // src is a register; direct form
+                        ss << "    imull " << src << ", " << dst << "\n";
                     }
-                } else if (isMemoryOperand(*b->src) && isMemoryOperand(*b->dst)) {
-                    ss << "    movl " << src << ", %r10d\n";
-                    ss << "    " << op << " %r10d, " << dst << "\n";
-                } else {
-                    ss << "    " << op << " " << src << ", " << dst << "\n";
                 }
-            }
-        } else if (auto* jz = dynamic_cast<const IRJumpIfZero*>(instPtr.get())) {
-            std::string target = formatLabel(jz->target);
-            if (isImmediateOperand(*jz->cond)) {
-                std::string cond = formatOperand(*jz->cond, pseudoOffsets);
-                ss << "    movl " << cond << ", %r10d\n";
-                ss << "    cmpl $0, %r10d\n";
+            } else if (isMemoryOperand(*b->src) && isMemoryOperand(*b->dst)) {
+                ss << "    movl " << src << ", %r10d\n";
+                ss << "    " << op << " %r10d, " << dst << "\n";
             } else {
-                ss << "    cmpl $0, " << formatOperand(*jz->cond, pseudoOffsets) << "\n";
+                ss << "    " << op << " " << src << ", " << dst << "\n";
             }
-            ss << "    je " << target << "\n";
-        } else if (auto* jnz = dynamic_cast<const IRJumpIfNotZero*>(instPtr.get())) {
-            std::string target = formatLabel(jnz->target);
-            if (isImmediateOperand(*jnz->cond)) {
-                std::string cond = formatOperand(*jnz->cond, pseudoOffsets);
-                ss << "    movl " << cond << ", %r10d\n";
-                ss << "    cmpl $0, %r10d\n";
+        } else if (auto* c = dynamic_cast<const IRCmp*>(instPtr.get())) {
+            std::string src = formatOperand(*c->src, pseudoOffsets);
+            std::string dst = formatOperand(*c->dst, pseudoOffsets);
+            if (isMemoryOperand(*c->src) && isMemoryOperand(*c->dst)) {
+                ss << "    movl " << src << ", %r10d\n";
+                ss << "    cmpl %r10d, " << dst << "\n";
             } else {
-                ss << "    cmpl $0, " << formatOperand(*jnz->cond, pseudoOffsets) << "\n";
+                ss << "    cmpl " << src << ", " << dst << "\n";
             }
-            ss << "    jne " << target << "\n";
+        } else if (auto* d = dynamic_cast<const IRIdiv*>(instPtr.get())) {
+            std::string divisor = formatOperand(*d->divisor, pseudoOffsets);
+            if (isImmediateOperand(*d->divisor)) {
+                ss << "    movl " << divisor << ", %r10d\n";
+                ss << "    idivl %r10d\n";
+            } else {
+                ss << "    idivl " << divisor << "\n";
+            }
+        } else if (dynamic_cast<const IRCdq*>(instPtr.get())) {
+            ss << "    cdq\n";
         } else if (auto* j = dynamic_cast<const IRJump*>(instPtr.get())) {
             ss << "    jmp " << formatLabel(j->target) << "\n";
+        } else if (auto* j = dynamic_cast<const IRJumpCC*>(instPtr.get())) {
+            ss << "    j" << condToSuffix(j->cond) << " " << formatLabel(j->target) << "\n";
+        } else if (auto* s = dynamic_cast<const IRSetCC*>(instPtr.get())) {
+            std::string dst = formatOperand(*s->dst, pseudoOffsets);
+            ss << "    set" << condToSuffix(s->cond) << " %al\n";
+            if (isMemoryOperand(*s->dst)) {
+                ss << "    movzbl %al, %r10d\n";
+                ss << "    movl %r10d, " << dst << "\n";
+            } else {
+                ss << "    movzbl %al, " << dst << "\n";
+            }
         } else if (auto* l = dynamic_cast<const IRLabel*>(instPtr.get())) {
             ss << formatLabel(l->name) << ":\n";
         } else if (auto* a = dynamic_cast<const IRAllocateStack*>(instPtr.get())) {
