@@ -215,7 +215,7 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
             ss << "    movq %rbp, %rsp\n";
             ss << "    popq %rbp\n";
             ss << "    ret\n";
-#if !IS_MAC
+#if defined(__linux__)
             ss << ".section .note.GNU-stack,\"\",@progbits\n";
 #endif
             return ss.str();
@@ -227,7 +227,7 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
     ss << "    movq %rbp, %rsp\n";
     ss << "    popq %rbp\n";
     ss << "    ret\n";
-#if !IS_MAC
+#if defined(__linux__)
     ss << ".section .note.GNU-stack,\"\",@progbits\n";
 #endif
 

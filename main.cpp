@@ -13,10 +13,10 @@
 
 /*
  TODO:
- 4. Language growth: add binary ops (+ - * /), precedence, and variable declarations.
- 5. Control flow: if/else, while, blocks, and compound statements.
- 6. Function calls + parameters: extend ABI handling and stack alignment.
- 7. Testing harness: golden tests that compare expected assembly/IR.
+  4. Language growth: add binary ops (+ - * /), precedence, and variable declarations.
+  5. Control flow: if/else, while, blocks, and compound statements.
+  6. Function calls + parameters: extend ABI handling and stack alignment.
+  7. Testing harness: golden tests that compare expected assembly/IR.
  */
 
 void printUsage() {
@@ -140,6 +140,12 @@ int main(int argc, char* argv[]) {
         std::filesystem::path outDir = p.parent_path();
         std::string assemblyFileName = (outDir / (baseName + ".s")).string();
         std::string outputFileName = (outDir / baseName).string();
+
+        // Detectar Windows en tiempo de compilación y añadir .exe
+#if defined(_WIN32) || defined(_WIN64)
+        outputFileName += ".exe";
+#endif
+
         writeFile(assemblyFileName, assembly);
 
         // 4. Linker
