@@ -25,6 +25,12 @@ namespace {
         if (auto c = dynamic_cast<const Constant*>(&e)) {
             return std::make_unique<IRImm>(c->value);
         }
+        if (dynamic_cast<const Var*>(&e)) {
+            throw std::runtime_error("Lowering error: variable references are not supported yet");
+        }
+        if (dynamic_cast<const Assignment*>(&e)) {
+            throw std::runtime_error("Lowering error: assignment expressions are not supported yet");
+        }
         auto ensureCmpDst = [&](std::unique_ptr<IROperand> operand) -> std::unique_ptr<IROperand> {
             if (dynamic_cast<IRImm*>(operand.get()) != nullptr) {
                 std::string tmpName = freshTempName();
@@ -166,12 +172,34 @@ std::unique_ptr<IRProgram> Lowering::toIR(const Program& program) {
     const Function& func = *program.function;
     std::vector<std::unique_ptr<IRInstruction>> body;
     std::unordered_set<std::string> pseudos;
-    if (auto ret = dynamic_cast<const Return*>(func.body.get())) {
-        auto retVal = emitTacky(*ret->expr, body, pseudos);
-        body.push_back(std::make_unique<IRMov>(std::move(retVal), std::make_unique<IRReg>(IRRegister::AX)));
-        body.push_back(std::make_unique<IRRet>());
+    bool sawReturn = false;
+    for (const auto& item : func.body) {
+        if (sawReturn) {
+            break;
+        }
+        if (auto ret = dynamic_cast<const Return*>(item.get())) {
+            auto retVal = emitTacky(*ret->expr, body, pseudos);
+            body.push_back(std::make_unique<IRMov>(std::move(retVal), std::make_unique<IRReg>(IRRegister::AX)));
+            body.push_back(std::make_unique<IRRet>());
+            sawReturn = true;
+            continue;
+        }
+        if (auto exprStmt = dynamic_cast<const ExpressionStatement*>(item.get())) {
+            (void)emitTacky(*exprStmt->expr, body, pseudos);
+            continue;
+        }
+        if (dynamic_cast<const EmptyStatement*>(item.get())) {
+            continue;
+        }
+        if (auto decl = dynamic_cast<const Declaration*>(item.get())) {
+            if (decl->init) {
+                (void)emitTacky(*decl->init, body, pseudos);
+            }
+            continue;
+        }
+        throw std::runtime_error("Lowering error: unsupported block item");
     }
-    else {
+    if (!sawReturn) {
         body.push_back(std::make_unique<IRMov>(std::make_unique<IRImm>(0), std::make_unique<IRReg>(IRRegister::AX)));
         body.push_back(std::make_unique<IRRet>());
     }

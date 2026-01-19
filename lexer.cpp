@@ -12,6 +12,7 @@ const std::vector<Lexer::TokenDefinition>& Lexer::getTokenDefinitions() {
         {TokenType::DOUBLEAND, std::regex("^&&")},
         {TokenType::DOUBLEBAR, std::regex("^\\|\\|")},
         {TokenType::TWOEQUAL, std::regex("^==")},
+        {TokenType::EQUAL, std::regex("^=")},
         {TokenType::NOTEQUAL, std::regex("^!=")},
         {TokenType::LESSEQUALTHAN, std::regex("^<=")},
         {TokenType::GREATEREQUALTHAN, std::regex("^>=")},
@@ -106,4 +107,3 @@ std::vector<Token> Lexer::tokenize(const std::string& input) {
 
     return tokens;
 }
-

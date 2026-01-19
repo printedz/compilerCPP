@@ -18,9 +18,37 @@ std::string ASTPrinter::print(const Function& function, int indent) {
     std::string ind = indentStr(indent);
     ss << ind << "Function(\n";
     ss << ind << "  name=\"" << function.name << "\",\n";
-    ss << ind << "  body=\n" << print(*function.body, indent + 2) << "\n";
+    ss << ind << "  body=[\n";
+    for (size_t i = 0; i < function.body.size(); ++i) {
+        ss << print(*function.body[i], indent + 2);
+        if (i + 1 < function.body.size()) {
+            ss << ",";
+        }
+        ss << "\n";
+    }
+    ss << ind << "  ]\n";
     ss << ind << ")";
     return ss.str();
+}
+// Print a block item
+std::string ASTPrinter::print(const BlockItem& item, int indent) {
+    if (auto* decl = dynamic_cast<const Declaration*>(&item)) {
+        std::ostringstream ss;
+        std::string ind = indentStr(indent);
+        ss << ind << "Declaration(\n";
+        ss << ind << "  name=\"" << decl->name << "\"";
+        if (decl->init) {
+            ss << ",\n" << ind << "  init=\n";
+            ss << print(*decl->init, indent + 2) << "\n" << ind << ")";
+        } else {
+            ss << "\n" << ind << ")";
+        }
+        return ss.str();
+    }
+    if (auto* stmt = dynamic_cast<const Statement*>(&item)) {
+        return print(*stmt, indent);
+    }
+    return indentStr(indent) + "<UnknownBlockItem>";
 }
 // Print a statement
 std::string ASTPrinter::print(const Statement& statement, int indent) {
@@ -30,12 +58,25 @@ std::string ASTPrinter::print(const Statement& statement, int indent) {
         ss << ind << "Return(\n" << print(*ret->expr, indent + 1) << "\n" << ind << ")";
         return ss.str();
     }
+    if (auto* exprStmt = dynamic_cast<const ExpressionStatement*>(&statement)) {
+        std::ostringstream ss;
+        std::string ind = indentStr(indent);
+        ss << ind << "ExpressionStatement(\n";
+        ss << print(*exprStmt->expr, indent + 1) << "\n" << ind << ")";
+        return ss.str();
+    }
+    if (dynamic_cast<const EmptyStatement*>(&statement)) {
+        return indentStr(indent) + "EmptyStatement()";
+    }
     return indentStr(indent) + "<UnknownStatement>";
 }
 // Print an expression
 std::string ASTPrinter::print(const Exp& exp, int indent) {
     if (auto* c = dynamic_cast<const Constant*>(&exp)) {
         return indentStr(indent) + "Constant(" + std::to_string(c->value) + ")";
+    }
+    if (auto* v = dynamic_cast<const Var*>(&exp)) {
+        return indentStr(indent) + "Var(\"" + v->name + "\")";
     }
     if (auto* u = dynamic_cast<const Unary*>(&exp)) {
         std::ostringstream ss;
@@ -75,6 +116,15 @@ std::string ASTPrinter::print(const Exp& exp, int indent) {
         ss << ind << "Binary(" << opStr << ",\n";
         ss << print(*b->left, indent + 1) << ",\n";
         ss << print(*b->right, indent + 1) << "\n";
+        ss << ind << ")";
+        return ss.str();
+    }
+    if (auto* a = dynamic_cast<const Assignment*>(&exp)) {
+        std::ostringstream ss;
+        std::string ind = indentStr(indent);
+        ss << ind << "Assignment(\n";
+        ss << print(*a->lhs, indent + 1) << ",\n";
+        ss << print(*a->rhs, indent + 1) << "\n";
         ss << ind << ")";
         return ss.str();
     }

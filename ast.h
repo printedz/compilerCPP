@@ -24,6 +24,7 @@ enum class TokenType {
     DOUBLEAND,
     DOUBLEBAR,
     TWOEQUAL,
+    EQUAL,
     NOTEQUAL,
     LESSTHAN,
     GREATERTHAN,
@@ -96,6 +97,11 @@ struct Constant : public Exp {
     explicit Constant(int v) : value(v) {}
 };
 
+struct Var : public Exp {
+    std::string name;
+    explicit Var(std::string n) : name(std::move(n)) {}
+};
+
 struct Unary : public Exp {
     UnaryOperator op;
     std::unique_ptr<Exp> expr;
@@ -110,9 +116,21 @@ struct Binary : public Exp {
         : op(o), left(std::move(l)), right(std::move(r)) {}
 };
 
+struct Assignment : public Exp {
+    std::unique_ptr<Exp> lhs;
+    std::unique_ptr<Exp> rhs;
+    Assignment(std::unique_ptr<Exp> l, std::unique_ptr<Exp> r)
+        : lhs(std::move(l)), rhs(std::move(r)) {}
+};
+
+// Block items
+struct BlockItem {
+    virtual ~BlockItem() = default;
+};
+
 // Statements
-struct Statement {
-    virtual ~Statement() = default;
+struct Statement : public BlockItem {
+    ~Statement() override = default;
 };
 
 struct Return : public Statement {
@@ -120,11 +138,26 @@ struct Return : public Statement {
     explicit Return(std::unique_ptr<Exp> e) : expr(std::move(e)) {}
 };
 
+struct ExpressionStatement : public Statement {
+    std::unique_ptr<Exp> expr;
+    explicit ExpressionStatement(std::unique_ptr<Exp> e) : expr(std::move(e)) {}
+};
+
+struct EmptyStatement : public Statement {
+};
+
+struct Declaration : public BlockItem {
+    std::string name;
+    std::unique_ptr<Exp> init; // nullptr when no initializer is present
+    Declaration(std::string n, std::unique_ptr<Exp> i)
+        : name(std::move(n)), init(std::move(i)) {}
+};
+
 // Function and Program
 struct Function {
     std::string name;
-    std::unique_ptr<Statement> body; // single statement body per grammar
-    Function(std::string n, std::unique_ptr<Statement> b)
+    std::vector<std::unique_ptr<BlockItem>> body;
+    Function(std::string n, std::vector<std::unique_ptr<BlockItem>> b)
         : name(std::move(n)), body(std::move(b)) {}
 };
 

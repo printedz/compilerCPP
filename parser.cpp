@@ -12,7 +12,7 @@ std::unique_ptr<Program> Parser::parseProgram() {
 }
 
 std::unique_ptr<Function> Parser::parseFunction() {
-    // Expect: int <identifier>(void) { <statement> }
+    // Expect: int <identifier>(void) { { <block-item> } }
     expect(TokenType::INT_KEYWORD);
 
     Token id = takeToken();
@@ -28,16 +28,49 @@ std::unique_ptr<Function> Parser::parseFunction() {
     expect(TokenType::CLOSE_PAREN);
     expect(TokenType::OPEN_BRACE);
 
-    auto stmt = parseStatement();
+    std::vector<std::unique_ptr<BlockItem>> body;
+    while (peekToken().type != TokenType::CLOSE_BRACE) {
+        body.push_back(parseBlockItem());
+    }
 
     expect(TokenType::CLOSE_BRACE);
 
-    return std::make_unique<Function>(id.value, std::move(stmt));
+    return std::make_unique<Function>(id.value, std::move(body));
+}
+
+std::unique_ptr<BlockItem> Parser::parseBlockItem() {
+    if (peekToken().type == TokenType::INT_KEYWORD) {
+        return parseDeclaration();
+    }
+    return parseStatement();
+}
+
+std::unique_ptr<Declaration> Parser::parseDeclaration() {
+    expect(TokenType::INT_KEYWORD);
+    Token id = takeToken();
+    if (id.type != TokenType::IDENTIFIER) {
+        throw std::runtime_error("Error: Expected identifier in declaration");
+    }
+    std::unique_ptr<Exp> initExpr = nullptr;
+    if (peekToken().type == TokenType::EQUAL) {
+        takeToken(); // consume '='
+        initExpr = parseExp();
+    }
+    expect(TokenType::SEMICOLON);
+    return std::make_unique<Declaration>(id.value, std::move(initExpr));
 }
 
 std::unique_ptr<Statement> Parser::parseStatement() {
-    // Only Return(exp); for now
-    return parseReturn();
+    if (peekToken().type == TokenType::RETURN_KEYWORD) {
+        return parseReturn();
+    }
+    if (peekToken().type == TokenType::SEMICOLON) {
+        takeToken(); // consume ';'
+        return std::make_unique<EmptyStatement>();
+    }
+    auto e = parseExp();
+    expect(TokenType::SEMICOLON);
+    return std::make_unique<ExpressionStatement>(std::move(e));
 }
 
 std::unique_ptr<Return> Parser::parseReturn() {
@@ -49,12 +82,22 @@ std::unique_ptr<Return> Parser::parseReturn() {
 
 // Top-level entry for expressions
 std::unique_ptr<Exp> Parser::parseExp() {
-    return parseOr();
+    return parseAssignment();
 }
 
 // Precedence climbing by layered parsing functions:
 // OR (||) -> AND (&&) -> Equality (==, !=) -> Relational (<, <=, >, >=)
 // -> Add/Sub -> Mul/Div/Mod -> Unary -> Primary
+
+std::unique_ptr<Exp> Parser::parseAssignment() {
+    auto left = parseOr();
+    if (peekToken().type == TokenType::EQUAL) {
+        takeToken(); // consume '='
+        auto right = parseAssignment(); // right-associative
+        return std::make_unique<Assignment>(std::move(left), std::move(right));
+    }
+    return left;
+}
 
 std::unique_ptr<Exp> Parser::parseOr() {
     auto left = parseAnd();
@@ -159,13 +202,19 @@ std::unique_ptr<Exp> Parser::parseUnary() {
 
 std::unique_ptr<Exp> Parser::parseFactor() {
     // parse_factor according to grammar:
-    // <factor> ::= <int> | "(" <exp> ")"
+    // <factor> ::= <int> | <identifier> | "(" <exp> ")"
     Token next = peekToken();
 
     // Integer literal
     if (next.type == TokenType::CONSTANT) {
         Token t = takeToken();
         return std::make_unique<Constant>(std::stoi(t.value));
+    }
+
+    // Identifier
+    if (next.type == TokenType::IDENTIFIER) {
+        Token t = takeToken();
+        return std::make_unique<Var>(t.value);
     }
 
     // Parenthesized expression
