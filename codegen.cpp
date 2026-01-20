@@ -66,6 +66,9 @@ static std::string formatLabel(const std::string& label) {
     if (label.rfind(".L", 0) == 0) {
         return label;
     }
+    if (label.rfind("L", 0) == 0) {
+        return "." + label;
+    }
     return ".L" + label;
 }
 
@@ -147,6 +150,7 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
     }
 
     // Body
+    bool sawRet = false;
     for (const auto& instPtr : func.body) {
         if (auto* m = dynamic_cast<const IRMov*>(instPtr.get())) {
             std::string src = formatOperand(*m->src, pseudoOffsets);
@@ -249,18 +253,17 @@ std::string CodeGenerator::genFunctionIR(const IRFunction& func) {
             ss << "    movq %rbp, %rsp\n";
             ss << "    popq %rbp\n";
             ss << "    ret\n";
-#if defined(__linux__)
-            ss << ".section .note.GNU-stack,\"\",@progbits\n";
-#endif
-            return ss.str();
+            sawRet = true;
         }
     }
 
     // If no explicit return, default to 0
-    ss << "    movl $0, %eax\n";
-    ss << "    movq %rbp, %rsp\n";
-    ss << "    popq %rbp\n";
-    ss << "    ret\n";
+    if (!sawRet) {
+        ss << "    movl $0, %eax\n";
+        ss << "    movq %rbp, %rsp\n";
+        ss << "    popq %rbp\n";
+        ss << "    ret\n";
+    }
 #if defined(__linux__)
     ss << ".section .note.GNU-stack,\"\",@progbits\n";
 #endif
