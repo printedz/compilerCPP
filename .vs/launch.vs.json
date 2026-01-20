@@ -76,6 +76,21 @@
         "--codegen",
         "${workspaceRoot}\\test\\test.c"
       ]
+    },
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "compiler.exe",
+      "name": "validate",
+      "workingDirectory": "${workspaceRoot}\\out\\build\\x64-Debug",
+      "commandLineArgs": [
+        "--validate",
+        "${workspaceRoot}\\test\\test.c"
+      ],
+      "args": [
+        "--validate",
+        "${workspaceRoot}\\test\\test.c"
+      ]
     }
   ]
 }

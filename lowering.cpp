@@ -7,11 +7,11 @@
 #include "ast.h"     // For BinaryOperator and AST definitions
 #include "ir.h"      // For IRBinaryOperator and IR definitions
 #include "lowering.h"
-// Helper to generate fresh temporary variable names: t0, t1, ...
+// Helper to generate fresh temporary variable names: tmp.0, tmp.1, ...
 namespace {
     static std::string freshTempName() {
         static int counter = 0;
-        return "t" + std::to_string(counter++);
+        return "tmp." + std::to_string(counter++);
     }
     static std::string freshLabelName() {
         static int counter = 0;
@@ -25,11 +25,21 @@ namespace {
         if (auto c = dynamic_cast<const Constant*>(&e)) {
             return std::make_unique<IRImm>(c->value);
         }
-        if (dynamic_cast<const Var*>(&e)) {
-            throw std::runtime_error("Lowering error: variable references are not supported yet");
+        if (auto v = dynamic_cast<const Var*>(&e)) {
+            pseudos.insert(v->name);
+            return std::make_unique<IRPseudo>(v->name);
         }
-        if (dynamic_cast<const Assignment*>(&e)) {
-            throw std::runtime_error("Lowering error: assignment expressions are not supported yet");
+        if (auto a = dynamic_cast<const Assignment*>(&e)) {
+            auto lhsVar = dynamic_cast<const Var*>(a->lhs.get());
+            if (lhsVar == nullptr) {
+                throw std::runtime_error("Lowering error: assignment to non-variable");
+            }
+            auto rhsVal = emitTacky(*a->rhs, instructions, pseudos);
+            pseudos.insert(lhsVar->name);
+            instructions.push_back(std::make_unique<IRMov>(
+                std::move(rhsVal),
+                std::make_unique<IRPseudo>(lhsVar->name)));
+            return std::make_unique<IRPseudo>(lhsVar->name);
         }
         auto ensureCmpDst = [&](std::unique_ptr<IROperand> operand) -> std::unique_ptr<IROperand> {
             if (dynamic_cast<IRImm*>(operand.get()) != nullptr) {
@@ -193,7 +203,11 @@ std::unique_ptr<IRProgram> Lowering::toIR(const Program& program) {
         }
         if (auto decl = dynamic_cast<const Declaration*>(item.get())) {
             if (decl->init) {
-                (void)emitTacky(*decl->init, body, pseudos);
+                auto initVal = emitTacky(*decl->init, body, pseudos);
+                pseudos.insert(decl->name);
+                body.push_back(std::make_unique<IRMov>(
+                    std::move(initVal),
+                    std::make_unique<IRPseudo>(decl->name)));
             }
             continue;
         }

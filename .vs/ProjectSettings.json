@@ -9,7 +9,8 @@
   "F62CF9E2613DC3BC48486667BC357F388701DECFD2C8B2A94C7626E177940657": "--codegen C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c|",
   "5DCAB5CB61648D6EB15880ECF80A037A26CC191918759F3ECED2BF16120C34DA": "--codegen C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP\\test\\test.c|--codegen C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c|",
   "25A448CF537C34DFF6A304EDDD01ECDE292D644B0BBAF331B08167279BAEC886": "--lex C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c|",
-  "188E9DE2CF966D442A76EA2CBB456DC30A27A7B7F604D59570E2F0F27DFA83B4": "--codegen C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP\\test\\test.c|",
   "9C28B66F84A91966BA674AAF5E396A6C1CA538F58C2ED9DC4120CE5815A1F547": "--codegen ${workspaceRoot}\\test\\test.c|--codegen C:\\Users\\alejandroregidornova\\source\\repos\\compilerCPP2\\test\\test.c|",
+  "12DD6A4C4E1F9779C6362720282ECAD1A8370F750FF63EDE56F929D453E73C6F": "--validate ${workspaceRoot}\\test\\test.c|",
+  "188E9DE2CF966D442A76EA2CBB456DC30A27A7B7F604D59570E2F0F27DFA83B4": "--codegen ${workspaceRoot}\\test\\test.c|",
   "CurrentProjectSetting": "x64-Debug"
 }
