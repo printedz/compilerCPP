@@ -1,9 +1,19 @@
 int main(void) {
-    int a = 6 * 7;
-    int b = (a + 1) * (a - 1);
+    int a = 5;
+    int b = 3;
     int c;
-    c = (b / a) + (a % 5) + (~0);
-    int d = (c == 0) || (a > b);
-    int e = (a < b) && (b != 0);
-    return d + e + (a / 7);
+
+    c = (a * b) + (a - b);
+
+    if (a < b)
+        c = c + 10;
+    else
+        c = c - 2;
+
+    int d = (c > 10) ? (c + 1) : (c - 1);
+
+    if (d != 0)
+        return d;
+
+    return 0;
 }

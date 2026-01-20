@@ -10,6 +10,8 @@ enum class TokenType {
     INT_KEYWORD,
     VOID_KEYWORD,
     RETURN_KEYWORD,
+    IF_KEYWORD,
+    ELSE_KEYWORD,
     TYPEDEF_KEYWORD,
     IDENTIFIER,
     CONSTANT,
@@ -35,6 +37,8 @@ enum class TokenType {
     CLOSE_PAREN,
     OPEN_BRACE,
     CLOSE_BRACE,
+    QUESTION,
+    COLON,
     SEMICOLON
 };
 
@@ -48,7 +52,12 @@ struct Token {
 // program = Program(function_definition)
 // function_definition = Function(identifier name, statement body)
 // statement = Return(exp)
+//          | Expression(exp)
+//          | If(exp condition, statement then, statement? else)
+//          | Null
 // exp = Constant(int) | Unary(unary_operator, exp) | Binary(binary_operator, exp, exp)
+//    | Assignment(exp, exp)
+//    | Conditional(exp condition, exp, exp)
 // unary_operator = Complement | Negate | Not
 // binary_operator = Add | Subtract | Multiply | Divide | Remainder | And | Or
 //                | Equal | NotEqual | LessThan | LessOrEqual
@@ -124,6 +133,18 @@ struct Assignment : public Exp {
         : lhs(std::move(l)), rhs(std::move(r)) {}
 };
 
+struct Conditional : public Exp {
+    std::unique_ptr<Exp> condition;
+    std::unique_ptr<Exp> thenExpr;
+    std::unique_ptr<Exp> elseExpr;
+    Conditional(std::unique_ptr<Exp> c,
+                std::unique_ptr<Exp> t,
+                std::unique_ptr<Exp> e)
+        : condition(std::move(c)),
+          thenExpr(std::move(t)),
+          elseExpr(std::move(e)) {}
+};
+
 // Block items
 struct BlockItem {
     virtual ~BlockItem() = default;
@@ -142,6 +163,18 @@ struct Return : public Statement {
 struct ExpressionStatement : public Statement {
     std::unique_ptr<Exp> expr;
     explicit ExpressionStatement(std::unique_ptr<Exp> e) : expr(std::move(e)) {}
+};
+
+struct IfStatement : public Statement {
+    std::unique_ptr<Exp> condition;
+    std::unique_ptr<Statement> thenStmt;
+    std::unique_ptr<Statement> elseStmt; // nullptr if no else clause
+    IfStatement(std::unique_ptr<Exp> c,
+                std::unique_ptr<Statement> t,
+                std::unique_ptr<Statement> e)
+        : condition(std::move(c)),
+          thenStmt(std::move(t)),
+          elseStmt(std::move(e)) {}
 };
 
 struct EmptyStatement : public Statement {

@@ -34,6 +34,18 @@ namespace {
         if (auto* ret = dynamic_cast<const Return*>(&stmt)) {
             return std::make_unique<Return>(resolveExp(*ret->expr, variableMap));
         }
+        if (auto* ifStmt = dynamic_cast<const IfStatement*>(&stmt)) {
+            auto condition = resolveExp(*ifStmt->condition, variableMap);
+            auto thenStmt = resolveStatement(*ifStmt->thenStmt, variableMap);
+            std::unique_ptr<Statement> elseStmt = nullptr;
+            if (ifStmt->elseStmt) {
+                elseStmt = resolveStatement(*ifStmt->elseStmt, variableMap);
+            }
+            return std::make_unique<IfStatement>(
+                std::move(condition),
+                std::move(thenStmt),
+                std::move(elseStmt));
+        }
         if (auto* exprStmt = dynamic_cast<const ExpressionStatement*>(&stmt)) {
             return std::make_unique<ExpressionStatement>(resolveExp(*exprStmt->expr, variableMap));
         }
@@ -87,6 +99,15 @@ namespace {
             auto lhs = resolveExp(*a->lhs, variableMap);
             auto rhs = resolveExp(*a->rhs, variableMap);
             return std::make_unique<Assignment>(std::move(lhs), std::move(rhs));
+        }
+        if (auto* c = dynamic_cast<const Conditional*>(&exp)) {
+            auto condition = resolveExp(*c->condition, variableMap);
+            auto thenExpr = resolveExp(*c->thenExpr, variableMap);
+            auto elseExpr = resolveExp(*c->elseExpr, variableMap);
+            return std::make_unique<Conditional>(
+                std::move(condition),
+                std::move(thenExpr),
+                std::move(elseExpr));
         }
         throw std::runtime_error("Resolver error: unsupported expression");
     }

@@ -7,6 +7,8 @@ const std::vector<Lexer::TokenDefinition>& Lexer::getTokenDefinitions() {
         {TokenType::INT_KEYWORD, std::regex("^int\\b")},
         {TokenType::VOID_KEYWORD, std::regex("^void\\b")},
         {TokenType::RETURN_KEYWORD, std::regex("^return\\b")},
+        {TokenType::IF_KEYWORD, std::regex("^if\\b")},
+        {TokenType::ELSE_KEYWORD, std::regex("^else\\b")},
         {TokenType::TYPEDEF_KEYWORD, std::regex("^typedef\\b")},
         {TokenType::IDENTIFIER, std::regex("^[a-zA-Z_]\\w*\\b")},
         {TokenType::CONSTANT, std::regex("^[0-9]+\\b")},
@@ -31,6 +33,8 @@ const std::vector<Lexer::TokenDefinition>& Lexer::getTokenDefinitions() {
         {TokenType::CLOSE_PAREN, std::regex("^\\)")},
         {TokenType::OPEN_BRACE, std::regex("^\\{")},
         {TokenType::CLOSE_BRACE, std::regex("^\\}")},
+        {TokenType::QUESTION, std::regex("^\\?")},
+        {TokenType::COLON, std::regex("^:")},
         {TokenType::SEMICOLON, std::regex("^;")},
     };
     return definitions;

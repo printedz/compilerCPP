@@ -74,6 +74,18 @@ std::string ASTPrinter::print(const Statement& statement, int indent) {
         ss << print(*exprStmt->expr, indent + 1) << "\n" << ind << ")";
         return ss.str();
     }
+    if (auto* ifStmt = dynamic_cast<const IfStatement*>(&statement)) {
+        std::ostringstream ss;
+        std::string ind = indentStr(indent);
+        ss << ind << "IfStatement(\n";
+        ss << ind << "  condition=\n" << print(*ifStmt->condition, indent + 2) << ",\n";
+        ss << ind << "  then=\n" << print(*ifStmt->thenStmt, indent + 2);
+        if (ifStmt->elseStmt) {
+            ss << ",\n" << ind << "  else=\n" << print(*ifStmt->elseStmt, indent + 2);
+        }
+        ss << "\n" << ind << ")";
+        return ss.str();
+    }
     if (dynamic_cast<const EmptyStatement*>(&statement)) {
         return indentStr(indent) + "EmptyStatement()";
     }
@@ -134,6 +146,16 @@ std::string ASTPrinter::print(const Exp& exp, int indent) {
         ss << ind << "Assignment(\n";
         ss << print(*a->lhs, indent + 1) << ",\n";
         ss << print(*a->rhs, indent + 1) << "\n";
+        ss << ind << ")";
+        return ss.str();
+    }
+    if (auto* c = dynamic_cast<const Conditional*>(&exp)) {
+        std::ostringstream ss;
+        std::string ind = indentStr(indent);
+        ss << ind << "Conditional(\n";
+        ss << print(*c->condition, indent + 1) << ",\n";
+        ss << print(*c->thenExpr, indent + 1) << ",\n";
+        ss << print(*c->elseExpr, indent + 1) << "\n";
         ss << ind << ")";
         return ss.str();
     }

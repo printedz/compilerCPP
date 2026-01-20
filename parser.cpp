@@ -1,6 +1,48 @@
 #include "parser.h"
 #include <stdexcept>
 
+namespace {
+    static int precedence(TokenType type) {
+        switch (type) {
+            case TokenType::EQUAL: return 1;
+            case TokenType::QUESTION: return 2;
+            case TokenType::DOUBLEBAR: return 3;
+            case TokenType::DOUBLEAND: return 4;
+            case TokenType::TWOEQUAL:
+            case TokenType::NOTEQUAL: return 5;
+            case TokenType::LESSTHAN:
+            case TokenType::LESSEQUALTHAN:
+            case TokenType::GREATERTHAN:
+            case TokenType::GREATEREQUALTHAN: return 6;
+            case TokenType::PLUS:
+            case TokenType::HYPHEN: return 7;
+            case TokenType::STAR:
+            case TokenType::SLASH:
+            case TokenType::PERCENT: return 8;
+            default: return -1;
+        }
+    }
+
+    static BinaryOperator tokenToBinaryOperator(TokenType type) {
+        switch (type) {
+            case TokenType::PLUS: return BinaryOperator::Add;
+            case TokenType::HYPHEN: return BinaryOperator::Subtract;
+            case TokenType::STAR: return BinaryOperator::Multiply;
+            case TokenType::SLASH: return BinaryOperator::Divide;
+            case TokenType::PERCENT: return BinaryOperator::Remainder;
+            case TokenType::DOUBLEBAR: return BinaryOperator::Or;
+            case TokenType::DOUBLEAND: return BinaryOperator::And;
+            case TokenType::TWOEQUAL: return BinaryOperator::Equal;
+            case TokenType::NOTEQUAL: return BinaryOperator::NotEqual;
+            case TokenType::LESSTHAN: return BinaryOperator::LessThan;
+            case TokenType::LESSEQUALTHAN: return BinaryOperator::LessOrEqual;
+            case TokenType::GREATERTHAN: return BinaryOperator::GreaterThan;
+            case TokenType::GREATEREQUALTHAN: return BinaryOperator::GreaterOrEqual;
+            default: throw std::runtime_error("Syntax error: Unsupported binary operator");
+        }
+    }
+}
+
 Parser::Parser(std::vector<Token> tokens) : tokens(std::move(tokens)) {}
 
 std::unique_ptr<Program> Parser::parseProgram() {
@@ -78,6 +120,9 @@ std::unique_ptr<Statement> Parser::parseStatement() {
     if (peekToken().type == TokenType::RETURN_KEYWORD) {
         return parseReturn();
     }
+    if (peekToken().type == TokenType::IF_KEYWORD) {
+        return parseIfStatement();
+    }
     if (peekToken().type == TokenType::SEMICOLON) {
         takeToken(); // consume ';'
         return std::make_unique<EmptyStatement>();
@@ -85,6 +130,20 @@ std::unique_ptr<Statement> Parser::parseStatement() {
     auto e = parseExp();
     expect(TokenType::SEMICOLON);
     return std::make_unique<ExpressionStatement>(std::move(e));
+}
+
+std::unique_ptr<IfStatement> Parser::parseIfStatement() {
+    expect(TokenType::IF_KEYWORD);
+    expect(TokenType::OPEN_PAREN);
+    auto condition = parseExp();
+    expect(TokenType::CLOSE_PAREN);
+    auto thenStmt = parseStatement();
+    std::unique_ptr<Statement> elseStmt = nullptr;
+    if (peekToken().type == TokenType::ELSE_KEYWORD) {
+        takeToken(); // consume 'else'
+        elseStmt = parseStatement();
+    }
+    return std::make_unique<IfStatement>(std::move(condition), std::move(thenStmt), std::move(elseStmt));
 }
 
 std::unique_ptr<Return> Parser::parseReturn() {
@@ -96,104 +155,37 @@ std::unique_ptr<Return> Parser::parseReturn() {
 
 // Top-level entry for expressions
 std::unique_ptr<Exp> Parser::parseExp() {
-    return parseAssignment();
+    return parseExpWithPrecedence(0);
 }
 
-// Precedence climbing by layered parsing functions:
-// OR (||) -> AND (&&) -> Equality (==, !=) -> Relational (<, <=, >, >=)
-// -> Add/Sub -> Mul/Div/Mod -> Unary -> Primary
-
-std::unique_ptr<Exp> Parser::parseAssignment() {
-    auto left = parseOr();
-    if (peekToken().type == TokenType::EQUAL) {
-        takeToken(); // consume '='
-        auto right = parseAssignment(); // right-associative
-        return std::make_unique<Assignment>(std::move(left), std::move(right));
-    }
-    return left;
-}
-
-std::unique_ptr<Exp> Parser::parseOr() {
-    auto left = parseAnd();
-    while (peekToken().type == TokenType::DOUBLEBAR) {
-        takeToken(); // consume '||'
-        auto right = parseAnd();
-        left = std::make_unique<Binary>(BinaryOperator::Or, std::move(left), std::move(right));
-    }
-    return left;
-}
-
-std::unique_ptr<Exp> Parser::parseAnd() {
-    auto left = parseEquality();
-    while (peekToken().type == TokenType::DOUBLEAND) {
-        takeToken(); // consume '&&'
-        auto right = parseEquality();
-        left = std::make_unique<Binary>(BinaryOperator::And, std::move(left), std::move(right));
-    }
-    return left;
-}
-
-std::unique_ptr<Exp> Parser::parseEquality() {
-    auto left = parseRelational();
-    while (peekToken().type == TokenType::TWOEQUAL || peekToken().type == TokenType::NOTEQUAL) {
-        Token op = takeToken();
-        auto right = parseRelational();
-        BinaryOperator binOp = (op.type == TokenType::TWOEQUAL) ? BinaryOperator::Equal : BinaryOperator::NotEqual;
-        left = std::make_unique<Binary>(binOp, std::move(left), std::move(right));
-    }
-    return left;
-}
-
-std::unique_ptr<Exp> Parser::parseRelational() {
-    auto left = parseAddSub();
-    while (peekToken().type == TokenType::LESSTHAN
-        || peekToken().type == TokenType::LESSEQUALTHAN
-        || peekToken().type == TokenType::GREATERTHAN
-        || peekToken().type == TokenType::GREATEREQUALTHAN) {
-        Token op = takeToken();
-        auto right = parseAddSub();
-        BinaryOperator binOp = BinaryOperator::LessThan;
-        if (op.type == TokenType::LESSTHAN) {
-            binOp = BinaryOperator::LessThan;
-        } else if (op.type == TokenType::LESSEQUALTHAN) {
-            binOp = BinaryOperator::LessOrEqual;
-        } else if (op.type == TokenType::GREATERTHAN) {
-            binOp = BinaryOperator::GreaterThan;
-        } else if (op.type == TokenType::GREATEREQUALTHAN) {
-            binOp = BinaryOperator::GreaterOrEqual;
-        }
-        left = std::make_unique<Binary>(binOp, std::move(left), std::move(right));
-    }
-    return left;
-}
-
-std::unique_ptr<Exp> Parser::parseAddSub() {
-    auto left = parseMulDiv();
-    while (peekToken().type == TokenType::PLUS || peekToken().type == TokenType::HYPHEN) {
-        Token op = takeToken();
-        auto right = parseMulDiv();
-        BinaryOperator binOp = (op.type == TokenType::PLUS) ? BinaryOperator::Add : BinaryOperator::Subtract;
-        left = std::make_unique<Binary>(binOp, std::move(left), std::move(right));
-    }
-    return left;
-}
-
-std::unique_ptr<Exp> Parser::parseMulDiv() {
+std::unique_ptr<Exp> Parser::parseExpWithPrecedence(int minPrec) {
     auto left = parseUnary();
-    while (peekToken().type == TokenType::STAR
-        || peekToken().type == TokenType::SLASH
-        || peekToken().type == TokenType::PERCENT) {
-        Token op = takeToken();
-        auto right = parseUnary();
-        BinaryOperator binOp = BinaryOperator::Divide;
-        if (op.type == TokenType::STAR) {
-            binOp = BinaryOperator::Multiply;
-        } else if (op.type == TokenType::SLASH) {
-            binOp = BinaryOperator::Divide;
+    Token next = peekToken();
+    int prec = precedence(next.type);
+    while (prec >= minPrec) {
+        if (next.type == TokenType::EQUAL) {
+            takeToken(); // consume '='
+            auto right = parseExpWithPrecedence(prec);
+            left = std::make_unique<Assignment>(std::move(left), std::move(right));
+        } else if (next.type == TokenType::QUESTION) {
+            takeToken(); // consume '?'
+            auto middle = parseExpWithPrecedence(0);
+            expect(TokenType::COLON);
+            auto right = parseExpWithPrecedence(prec);
+            left = std::make_unique<Conditional>(
+                std::move(left),
+                std::move(middle),
+                std::move(right));
         } else {
-            binOp = BinaryOperator::Remainder;
+            Token op = takeToken();
+            auto right = parseExpWithPrecedence(prec + 1);
+            left = std::make_unique<Binary>(
+                tokenToBinaryOperator(op.type),
+                std::move(left),
+                std::move(right));
         }
-        left = std::make_unique<Binary>(binOp, std::move(left), std::move(right));
+        next = peekToken();
+        prec = precedence(next.type);
     }
     return left;
 }
