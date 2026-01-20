@@ -54,7 +54,7 @@ std::unique_ptr<Program> Parser::parseProgram() {
 }
 
 std::unique_ptr<Function> Parser::parseFunction() {
-    // Expect: int <identifier>(void) { { <block-item> } }
+    // Expect: int <identifier>(void) { <block-item>* }
     expect(TokenType::INT_KEYWORD);
 
     Token id = takeToken();
@@ -68,16 +68,19 @@ std::unique_ptr<Function> Parser::parseFunction() {
     }
     takeToken(); // consume 'void'
     expect(TokenType::CLOSE_PAREN);
-    expect(TokenType::OPEN_BRACE);
 
-    std::vector<std::unique_ptr<BlockItem>> body;
-    while (peekToken().type != TokenType::CLOSE_BRACE) {
-        body.push_back(parseBlockItem());
-    }
-
-    expect(TokenType::CLOSE_BRACE);
-
+    auto body = parseBlock();
     return std::make_unique<Function>(id.value, std::move(body));
+}
+
+std::unique_ptr<Block> Parser::parseBlock() {
+    expect(TokenType::OPEN_BRACE);
+    std::vector<std::unique_ptr<BlockItem>> items;
+    while (peekToken().type != TokenType::CLOSE_BRACE) {
+        items.push_back(parseBlockItem());
+    }
+    expect(TokenType::CLOSE_BRACE);
+    return std::make_unique<Block>(std::move(items));
 }
 
 std::unique_ptr<BlockItem> Parser::parseBlockItem() {
@@ -122,6 +125,9 @@ std::unique_ptr<Statement> Parser::parseStatement() {
     }
     if (peekToken().type == TokenType::IF_KEYWORD) {
         return parseIfStatement();
+    }
+    if (peekToken().type == TokenType::OPEN_BRACE) {
+        return std::make_unique<CompoundStatement>(parseBlock());
     }
     if (peekToken().type == TokenType::SEMICOLON) {
         takeToken(); // consume ';'

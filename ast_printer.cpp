@@ -18,10 +18,19 @@ std::string ASTPrinter::print(const Function& function, int indent) {
     std::string ind = indentStr(indent);
     ss << ind << "Function(\n";
     ss << ind << "  name=\"" << function.name << "\",\n";
-    ss << ind << "  body=[\n";
-    for (size_t i = 0; i < function.body.size(); ++i) {
-        ss << print(*function.body[i], indent + 2);
-        if (i + 1 < function.body.size()) {
+    ss << ind << "  body=\n" << print(*function.body, indent + 1) << "\n";
+    ss << ind << ")";
+    return ss.str();
+}
+// Print a block
+std::string ASTPrinter::print(const Block& block, int indent) {
+    std::ostringstream ss;
+    std::string ind = indentStr(indent);
+    ss << ind << "Block(\n";
+    ss << ind << "  items=[\n";
+    for (size_t i = 0; i < block.items.size(); ++i) {
+        ss << print(*block.items[i], indent + 2);
+        if (i + 1 < block.items.size()) {
             ss << ",";
         }
         ss << "\n";
@@ -88,6 +97,14 @@ std::string ASTPrinter::print(const Statement& statement, int indent) {
     }
     if (dynamic_cast<const EmptyStatement*>(&statement)) {
         return indentStr(indent) + "EmptyStatement()";
+    }
+    if (auto* compound = dynamic_cast<const CompoundStatement*>(&statement)) {
+        std::ostringstream ss;
+        std::string ind = indentStr(indent);
+        ss << ind << "Compound(\n";
+        ss << print(*compound->block, indent + 1) << "\n";
+        ss << ind << ")";
+        return ss.str();
     }
     return indentStr(indent) + "<UnknownStatement>";
 }

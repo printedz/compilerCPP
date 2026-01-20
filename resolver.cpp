@@ -13,6 +13,10 @@ namespace {
         const Exp& exp,
         std::unordered_map<std::string, std::string>& variableMap);
 
+    static std::unique_ptr<Block> resolveBlock(
+        const Block& block,
+        std::unordered_map<std::string, std::string> variableMap);
+
     static std::unique_ptr<Declaration> resolveDeclaration(
         const Declaration& decl,
         std::unordered_map<std::string, std::string>& variableMap) {
@@ -51,6 +55,9 @@ namespace {
         }
         if (dynamic_cast<const EmptyStatement*>(&stmt)) {
             return std::make_unique<EmptyStatement>();
+        }
+        if (auto* compound = dynamic_cast<const CompoundStatement*>(&stmt)) {
+            return std::make_unique<CompoundStatement>(resolveBlock(*compound->block, variableMap));
         }
         throw std::runtime_error("Resolver error: unsupported statement");
     }
@@ -111,15 +118,22 @@ namespace {
         }
         throw std::runtime_error("Resolver error: unsupported expression");
     }
+
+    static std::unique_ptr<Block> resolveBlock(
+        const Block& block,
+        std::unordered_map<std::string, std::string> variableMap) {
+        std::vector<std::unique_ptr<BlockItem>> items;
+        items.reserve(block.items.size());
+        for (const auto& item : block.items) {
+            items.push_back(resolveBlockItem(*item, variableMap));
+        }
+        return std::make_unique<Block>(std::move(items));
+    }
 }
 
 std::unique_ptr<Program> Resolver::resolve(const Program& program) {
     std::unordered_map<std::string, std::string> variableMap;
-    std::vector<std::unique_ptr<BlockItem>> body;
-    body.reserve(program.function->body.size());
-    for (const auto& item : program.function->body) {
-        body.push_back(resolveBlockItem(*item, variableMap));
-    }
+    auto body = resolveBlock(*program.function->body, variableMap);
     auto function = std::make_unique<Function>(program.function->name, std::move(body));
     return std::make_unique<Program>(std::move(function));
 }

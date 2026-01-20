@@ -16,6 +16,7 @@ private:
 
     // parsing helpers
     std::unique_ptr<Function> parseFunction();
+    std::unique_ptr<Block> parseBlock();
     std::unique_ptr<BlockItem> parseBlockItem();
     std::unique_ptr<Declaration> parseDeclaration();
     std::unique_ptr<Typedef> parseTypedef();

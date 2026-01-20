@@ -245,6 +245,29 @@ namespace {
         if (dynamic_cast<const EmptyStatement*>(&stmt)) {
             return;
         }
+        if (auto compound = dynamic_cast<const CompoundStatement*>(&stmt)) {
+            for (const auto& item : compound->block->items) {
+                if (auto decl = dynamic_cast<const Declaration*>(item.get())) {
+                    if (decl->init) {
+                        auto initVal = emitTacky(*decl->init, instructions, pseudos);
+                        pseudos.insert(decl->name);
+                        instructions.push_back(std::make_unique<IRMov>(
+                            std::move(initVal),
+                            std::make_unique<IRPseudo>(decl->name)));
+                    }
+                    continue;
+                }
+                if (dynamic_cast<const Typedef*>(item.get())) {
+                    continue;
+                }
+                if (auto innerStmt = dynamic_cast<const Statement*>(item.get())) {
+                    emitStatement(*innerStmt, instructions, pseudos);
+                    continue;
+                }
+                throw std::runtime_error("Lowering error: unsupported block item");
+            }
+            return;
+        }
         throw std::runtime_error("Lowering error: unsupported statement");
     }
 }
@@ -253,7 +276,7 @@ std::unique_ptr<IRProgram> Lowering::toIR(const Program& program) {
     std::vector<std::unique_ptr<IRInstruction>> body;
     std::unordered_set<std::string> pseudos;
     bool sawReturn = false;
-    for (const auto& item : func.body) {
+    for (const auto& item : func.body->items) {
         if (sawReturn) {
             break;
         }

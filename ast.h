@@ -50,10 +50,13 @@ struct Token {
 // ========================
 // High-level AST for grammar
 // program = Program(function_definition)
-// function_definition = Function(identifier name, statement body)
+// function_definition = Function(identifier name, block body)
+// block = Block(block_item*)
+// block_item = S(statement) | D(declaration)
 // statement = Return(exp)
 //          | Expression(exp)
 //          | If(exp condition, statement then, statement? else)
+//          | Compound(block)
 //          | Null
 // exp = Constant(int) | Unary(unary_operator, exp) | Binary(binary_operator, exp, exp)
 //    | Assignment(exp, exp)
@@ -65,6 +68,7 @@ struct Token {
 // ========================
 
 // Forward decls
+struct Block;
 struct Statement;
 struct Exp;
 
@@ -150,6 +154,12 @@ struct BlockItem {
     virtual ~BlockItem() = default;
 };
 
+// Block
+struct Block {
+    std::vector<std::unique_ptr<BlockItem>> items;
+    explicit Block(std::vector<std::unique_ptr<BlockItem>> i) : items(std::move(i)) {}
+};
+
 // Statements
 struct Statement : public BlockItem {
     ~Statement() override = default;
@@ -180,6 +190,11 @@ struct IfStatement : public Statement {
 struct EmptyStatement : public Statement {
 };
 
+struct CompoundStatement : public Statement {
+    std::unique_ptr<Block> block;
+    explicit CompoundStatement(std::unique_ptr<Block> b) : block(std::move(b)) {}
+};
+
 struct Declaration : public BlockItem {
     std::string name;
     std::unique_ptr<Exp> init; // nullptr when no initializer is present
@@ -197,8 +212,8 @@ struct Typedef : public BlockItem {
 // Function and Program
 struct Function {
     std::string name;
-    std::vector<std::unique_ptr<BlockItem>> body;
-    Function(std::string n, std::vector<std::unique_ptr<BlockItem>> b)
+    std::unique_ptr<Block> body;
+    Function(std::string n, std::unique_ptr<Block> b)
         : name(std::move(n)), body(std::move(b)) {}
 };
 

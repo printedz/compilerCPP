@@ -119,6 +119,12 @@ int main(int argc, char* argv[]) {
         // 2. Fase de Parser
         Parser parser(tokens);
         auto ast = parser.parseProgram();
+
+        if (parseOnly) {
+            std::cout << ASTPrinter::print(*ast) << std::endl;
+            return 0;
+        }
+
         auto resolved = Resolver::resolve(*ast);
 
         if (validateOnly) {
@@ -128,11 +134,6 @@ int main(int argc, char* argv[]) {
         if (irOnly || tackyOnly) {
             auto ir = Lowering::toIR(*resolved);
             std::cout << IRPrinter::print(*ir) << std::endl;
-            return 0;
-        }
-
-        if (parseOnly) {
-            std::cout << ASTPrinter::print(*resolved) << std::endl;
             return 0;
         }
 
