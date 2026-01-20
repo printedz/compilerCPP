@@ -10,6 +10,7 @@ enum class TokenType {
     INT_KEYWORD,
     VOID_KEYWORD,
     RETURN_KEYWORD,
+    TYPEDEF_KEYWORD,
     IDENTIFIER,
     CONSTANT,
     TILDE,      // '~' complement
@@ -151,6 +152,13 @@ struct Declaration : public BlockItem {
     std::unique_ptr<Exp> init; // nullptr when no initializer is present
     Declaration(std::string n, std::unique_ptr<Exp> i)
         : name(std::move(n)), init(std::move(i)) {}
+};
+
+struct Typedef : public BlockItem {
+    std::string name;
+    std::string baseType;
+    Typedef(std::string n, std::string t)
+        : name(std::move(n)), baseType(std::move(t)) {}
 };
 
 // Function and Program

@@ -39,10 +39,24 @@ std::unique_ptr<Function> Parser::parseFunction() {
 }
 
 std::unique_ptr<BlockItem> Parser::parseBlockItem() {
+    if (peekToken().type == TokenType::TYPEDEF_KEYWORD) {
+        return parseTypedef();
+    }
     if (peekToken().type == TokenType::INT_KEYWORD) {
         return parseDeclaration();
     }
     return parseStatement();
+}
+
+std::unique_ptr<Typedef> Parser::parseTypedef() {
+    expect(TokenType::TYPEDEF_KEYWORD);
+    expect(TokenType::INT_KEYWORD);
+    Token id = takeToken();
+    if (id.type != TokenType::IDENTIFIER) {
+        throw std::runtime_error("Error: Expected identifier in typedef");
+    }
+    expect(TokenType::SEMICOLON);
+    return std::make_unique<Typedef>(id.value, "int");
 }
 
 std::unique_ptr<Declaration> Parser::parseDeclaration() {

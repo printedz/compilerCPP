@@ -9,11 +9,13 @@ add_executable(compiler
         parser.cpp 
         codegen.cpp 
         ast_printer.cpp 
+        resolver.cpp
         ast.h 
         lexer.h 
         parser.h 
         codegen.h 
         ast_printer.h
+        resolver.h
         ir.h
         ir_printer.cpp
         ir_printer.h

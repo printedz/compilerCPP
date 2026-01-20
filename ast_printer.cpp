@@ -45,6 +45,15 @@ std::string ASTPrinter::print(const BlockItem& item, int indent) {
         }
         return ss.str();
     }
+    if (auto* td = dynamic_cast<const Typedef*>(&item)) {
+        std::ostringstream ss;
+        std::string ind = indentStr(indent);
+        ss << ind << "Typedef(\n";
+        ss << ind << "  name=\"" << td->name << "\",\n";
+        ss << ind << "  baseType=\"" << td->baseType << "\"\n";
+        ss << ind << ")";
+        return ss.str();
+    }
     if (auto* stmt = dynamic_cast<const Statement*>(&item)) {
         return print(*stmt, indent);
     }

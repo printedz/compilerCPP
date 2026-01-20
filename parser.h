@@ -18,6 +18,7 @@ private:
     std::unique_ptr<Function> parseFunction();
     std::unique_ptr<BlockItem> parseBlockItem();
     std::unique_ptr<Declaration> parseDeclaration();
+    std::unique_ptr<Typedef> parseTypedef();
     std::unique_ptr<Statement> parseStatement();
     std::unique_ptr<Return> parseReturn();
     std::unique_ptr<Exp> parseExp();

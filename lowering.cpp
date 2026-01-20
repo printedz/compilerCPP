@@ -197,6 +197,9 @@ std::unique_ptr<IRProgram> Lowering::toIR(const Program& program) {
             }
             continue;
         }
+        if (dynamic_cast<const Typedef*>(item.get())) {
+            continue;
+        }
         throw std::runtime_error("Lowering error: unsupported block item");
     }
     if (!sawReturn) {

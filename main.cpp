@@ -10,6 +10,7 @@
 #include "ast_printer.h"
 #include "ir_printer.h"
 #include "lowering.h"
+#include "resolver.h"
 
 /*
  TODO:
@@ -80,6 +81,7 @@ int main(int argc, char* argv[]) {
     bool codegenOnly = false;
     bool irOnly = false;
     bool tackyOnly = false;
+    bool validateOnly = false;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -88,6 +90,7 @@ int main(int argc, char* argv[]) {
         else if (arg == "--codegen") codegenOnly = true;
         else if (arg == "--ir") irOnly = true;
         else if (arg == "--tacky") tackyOnly = true;
+        else if (arg == "--validate") validateOnly = true;
         else if (arg.starts_with("-")) {
             std::cerr << "Error: Opción desconocida " << arg << std::endl;
             return 1;
@@ -116,20 +119,25 @@ int main(int argc, char* argv[]) {
         // 2. Fase de Parser
         Parser parser(tokens);
         auto ast = parser.parseProgram();
+        auto resolved = Resolver::resolve(*ast);
+
+        if (validateOnly) {
+            return 0;
+        }
 
         if (irOnly || tackyOnly) {
-            auto ir = Lowering::toIR(*ast);
+            auto ir = Lowering::toIR(*resolved);
             std::cout << IRPrinter::print(*ir) << std::endl;
             return 0;
         }
 
         if (parseOnly) {
-            std::cout << ASTPrinter::print(*ast) << std::endl;
+            std::cout << ASTPrinter::print(*resolved) << std::endl;
             return 0;
         }
 
         // 3. Fase de Generación de Código
-        std::string assembly = CodeGenerator::generate(*ast);
+        std::string assembly = CodeGenerator::generate(*resolved);
         if (codegenOnly) {
             std::cout << assembly << std::endl;
             return 0;
