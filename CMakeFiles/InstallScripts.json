@@ -1,0 +1,10 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/Aleja/source/repos/compilerCPP/cmake_install.cmake",
+		"C:/Users/Aleja/source/repos/compilerCPP/_deps/googletest-build/cmake_install.cmake",
+		"C:/Users/Aleja/source/repos/compilerCPP/_deps/googletest-build/googlemock/cmake_install.cmake",
+		"C:/Users/Aleja/source/repos/compilerCPP/_deps/googletest-build/googletest/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

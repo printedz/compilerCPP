@@ -1,0 +1,38 @@
+Start testing: Jan 24 15:09 Hora estándar romance
+----------------------------------------------------------
+1/1 Testing: compiler_tests
+1/1 Test: compiler_tests
+Command: "C:/Users/Aleja/source/repos/compilerCPP/Debug/compiler_tests.exe"
+Directory: C:/Users/Aleja/source/repos/compilerCPP
+"compiler_tests" start time: Jan 24 15:09 Hora estándar romance
+Output:
+----------------------------------------------------------
+Running main() from C:\Users\Aleja\source\repos\compilerCPP\_deps\googletest-src\googletest\src\gtest_main.cc
+[==========] Running 4 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from LexerTests
+[ RUN      ] LexerTests.TokenizesSimpleFunction
+[       OK ] LexerTests.TokenizesSimpleFunction (1 ms)
+[ RUN      ] LexerTests.SkipsCommentsAndWhitespace
+[       OK ] LexerTests.SkipsCommentsAndWhitespace (1 ms)
+[----------] 2 tests from LexerTests (3 ms total)
+
+[----------] 2 tests from ParserTests
+[ RUN      ] ParserTests.ParsesReturnConstant
+[       OK ] ParserTests.ParsesReturnConstant (1 ms)
+[ RUN      ] ParserTests.RespectsBinaryPrecedence
+[       OK ] ParserTests.RespectsBinaryPrecedence (2 ms)
+[----------] 2 tests from ParserTests (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 2 test suites ran. (7 ms total)
+[  PASSED  ] 4 tests.
+<end of output>
+Test time =   1.60 sec
+----------------------------------------------------------
+Test Passed.
+"compiler_tests" end time: Jan 24 15:09 Hora estándar romance
+"compiler_tests" time elapsed: 00:00:01
+----------------------------------------------------------
+
+End testing: Jan 24 15:09 Hora estándar romance

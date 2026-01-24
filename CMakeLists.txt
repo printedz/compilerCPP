@@ -3,24 +3,35 @@ project(compiler)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(compiler 
-        main.cpp 
-        lexer.cpp 
-        parser.cpp 
-        codegen.cpp 
-        ast_printer.cpp 
+set(COMPILER_SOURCES
+        lexer.cpp
+        parser.cpp
+        codegen.cpp
+        ast_printer.cpp
         resolver.cpp
-        ast.h 
-        lexer.h 
-        parser.h 
-        codegen.h 
-        ast_printer.h
-        resolver.h
-        ir.h
         ir_printer.cpp
-        ir_printer.h
-        lowering.cpp
-        lowering.h)
+        lowering.cpp)
+
+add_library(compiler_lib ${COMPILER_SOURCES})
+target_include_directories(compiler_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_executable(compiler main.cpp)
+target_link_libraries(compiler PRIVATE compiler_lib)
+
+include(FetchContent)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+add_executable(compiler_tests
+        tests/lexer_tests.cpp
+        tests/parser_tests.cpp)
+target_link_libraries(compiler_tests PRIVATE compiler_lib GTest::gtest_main)
+add_test(NAME compiler_tests COMMAND compiler_tests)
 
 function(add_compiler_action_target target_name action_arg)
     add_custom_target(${target_name}

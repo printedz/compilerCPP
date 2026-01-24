@@ -1,0 +1,7 @@
+C:\Users\Aleja\source\repos\compilerCPP\lexer.cpp;C:\Users\Aleja\source\repos\compilerCPP\compiler_lib.dir\Debug\lexer.obj
+C:\Users\Aleja\source\repos\compilerCPP\parser.cpp;C:\Users\Aleja\source\repos\compilerCPP\compiler_lib.dir\Debug\parser.obj
+C:\Users\Aleja\source\repos\compilerCPP\codegen.cpp;C:\Users\Aleja\source\repos\compilerCPP\compiler_lib.dir\Debug\codegen.obj
+C:\Users\Aleja\source\repos\compilerCPP\ast_printer.cpp;C:\Users\Aleja\source\repos\compilerCPP\compiler_lib.dir\Debug\ast_printer.obj
+C:\Users\Aleja\source\repos\compilerCPP\resolver.cpp;C:\Users\Aleja\source\repos\compilerCPP\compiler_lib.dir\Debug\resolver.obj
+C:\Users\Aleja\source\repos\compilerCPP\ir_printer.cpp;C:\Users\Aleja\source\repos\compilerCPP\compiler_lib.dir\Debug\ir_printer.obj
+C:\Users\Aleja\source\repos\compilerCPP\lowering.cpp;C:\Users\Aleja\source\repos\compilerCPP\compiler_lib.dir\Debug\lowering.obj

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Aleja\source\repos\compilerCPP\CMakeFiles\d41688a34646c57ecf55aad2d41846c3\ir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Aleja\source\repos\compilerCPP\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Aleja\source\repos\compilerCPP\CMakeFiles\ir" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{A260AA25-0D8A-3CD3-AA9E-224BDBE691BC}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
