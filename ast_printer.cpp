@@ -98,6 +98,63 @@ std::string ASTPrinter::print(const Statement& statement, int indent) {
     if (dynamic_cast<const EmptyStatement*>(&statement)) {
         return indentStr(indent) + "EmptyStatement()";
     }
+    if (dynamic_cast<const BreakStatement*>(&statement)) {
+        return indentStr(indent) + "Break()";
+    }
+    if (dynamic_cast<const ContinueStatement*>(&statement)) {
+        return indentStr(indent) + "Continue()";
+    }
+    if (auto* whileStmt = dynamic_cast<const WhileStatement*>(&statement)) {
+        std::ostringstream ss;
+        std::string ind = indentStr(indent);
+        ss << ind << "While(\n";
+        ss << ind << "  condition=\n" << print(*whileStmt->condition, indent + 2) << ",\n";
+        ss << ind << "  body=\n" << print(*whileStmt->body, indent + 2) << "\n";
+        ss << ind << ")";
+        return ss.str();
+    }
+    if (auto* doWhile = dynamic_cast<const DoWhileStatement*>(&statement)) {
+        std::ostringstream ss;
+        std::string ind = indentStr(indent);
+        ss << ind << "DoWhile(\n";
+        ss << ind << "  body=\n" << print(*doWhile->body, indent + 2) << ",\n";
+        ss << ind << "  condition=\n" << print(*doWhile->condition, indent + 2) << "\n";
+        ss << ind << ")";
+        return ss.str();
+    }
+    if (auto* forStmt = dynamic_cast<const ForStatement*>(&statement)) {
+        std::ostringstream ss;
+        std::string ind = indentStr(indent);
+        ss << ind << "For(\n";
+        ss << ind << "  init=";
+        if (auto* d = dynamic_cast<const InitDecl*>(forStmt->init.get())) {
+            ss << "\n" << print(*d->decl, indent + 2);
+        } else if (auto* e = dynamic_cast<const InitExp*>(forStmt->init.get())) {
+            if (e->expr) {
+                ss << "\n" << print(*e->expr, indent + 2);
+            } else {
+                ss << "null";
+            }
+        }
+        ss << ",\n";
+        ss << ind << "  condition=";
+        if (forStmt->condition) {
+            ss << "\n" << print(*forStmt->condition, indent + 2);
+        } else {
+            ss << "null";
+        }
+        ss << ",\n";
+        ss << ind << "  post=";
+        if (forStmt->post) {
+            ss << "\n" << print(*forStmt->post, indent + 2);
+        } else {
+            ss << "null";
+        }
+        ss << ",\n";
+        ss << ind << "  body=\n" << print(*forStmt->body, indent + 2) << "\n";
+        ss << ind << ")";
+        return ss.str();
+    }
     if (auto* compound = dynamic_cast<const CompoundStatement*>(&statement)) {
         std::ostringstream ss;
         std::string ind = indentStr(indent);

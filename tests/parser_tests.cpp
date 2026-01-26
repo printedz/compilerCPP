@@ -49,3 +49,65 @@ TEST(ParserTests, RespectsBinaryPrecedence) {
     EXPECT_EQ(rhsLeft->value, 2);
     EXPECT_EQ(rhsRight->value, 3);
 }
+
+TEST(ParserTests, ParsesWhileAndDoWhile) {
+    const std::string source = R"(
+        int main(void) {
+            while (x) return y;
+            do return z; while (w);
+        }
+    )";
+    auto tokens = Lexer::tokenize(source);
+    Parser parser(tokens);
+    auto program = parser.parseProgram();
+
+    ASSERT_EQ(program->function->body->items.size(), 2u);
+
+    auto* whileStmt = dynamic_cast<WhileStatement*>(program->function->body->items[0].get());
+    ASSERT_NE(whileStmt, nullptr);
+    EXPECT_NE(dynamic_cast<Var*>(whileStmt->condition.get()), nullptr);
+    auto* whileBody = dynamic_cast<Return*>(whileStmt->body.get());
+    ASSERT_NE(whileBody, nullptr);
+
+    auto* doWhile = dynamic_cast<DoWhileStatement*>(program->function->body->items[1].get());
+    ASSERT_NE(doWhile, nullptr);
+    auto* doReturn = dynamic_cast<Return*>(doWhile->body.get());
+    ASSERT_NE(doReturn, nullptr);
+    EXPECT_NE(dynamic_cast<Var*>(doReturn->expr.get()), nullptr);
+    EXPECT_NE(dynamic_cast<Var*>(doWhile->condition.get()), nullptr);
+}
+
+TEST(ParserTests, ParsesForWithDeclarationInit) {
+    const std::string source = R"(
+        int main(void) {
+            for (int i = 0; i < 3; i = i + 1) continue;
+        }
+    )";
+    auto tokens = Lexer::tokenize(source);
+    Parser parser(tokens);
+    auto program = parser.parseProgram();
+
+    ASSERT_EQ(program->function->body->items.size(), 1u);
+
+    auto* forStmt = dynamic_cast<ForStatement*>(program->function->body->items[0].get());
+    ASSERT_NE(forStmt, nullptr);
+    auto* initDecl = dynamic_cast<InitDecl*>(forStmt->init.get());
+    ASSERT_NE(initDecl, nullptr);
+    ASSERT_NE(initDecl->decl->init, nullptr);
+    EXPECT_NE(dynamic_cast<Binary*>(forStmt->condition.get()), nullptr);
+    EXPECT_NE(dynamic_cast<Assignment*>(forStmt->post.get()), nullptr);
+
+    auto* cont = dynamic_cast<ContinueStatement*>(forStmt->body.get());
+    ASSERT_NE(cont, nullptr);
+}
+
+TEST(ParserTests, ParsesBreakStatement) {
+    const std::string source = "int main(void) { break; }";
+    auto tokens = Lexer::tokenize(source);
+    Parser parser(tokens);
+    auto program = parser.parseProgram();
+
+    ASSERT_EQ(program->function->body->items.size(), 1u);
+    auto* br = dynamic_cast<BreakStatement*>(program->function->body->items[0].get());
+    ASSERT_NE(br, nullptr);
+}

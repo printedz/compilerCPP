@@ -126,6 +126,21 @@ std::unique_ptr<Statement> Parser::parseStatement() {
     if (peekToken().type == TokenType::IF_KEYWORD) {
         return parseIfStatement();
     }
+    if (peekToken().type == TokenType::WHILE_KEYWORD) {
+        return parseWhileStatement();
+    }
+    if (peekToken().type == TokenType::DO_KEYWORD) {
+        return parseDoWhileStatement();
+    }
+    if (peekToken().type == TokenType::FOR_KEYWORD) {
+        return parseForStatement();
+    }
+    if (peekToken().type == TokenType::BREAK_KEYWORD) {
+        return parseBreak();
+    }
+    if (peekToken().type == TokenType::CONTINUE_KEYWORD) {
+        return parseContinue();
+    }
     if (peekToken().type == TokenType::OPEN_BRACE) {
         return std::make_unique<CompoundStatement>(parseBlock());
     }
@@ -157,6 +172,74 @@ std::unique_ptr<Return> Parser::parseReturn() {
     auto e = parseExp();
     expect(TokenType::SEMICOLON);
     return std::make_unique<Return>(std::move(e));
+}
+
+std::unique_ptr<Statement> Parser::parseBreak() {
+    expect(TokenType::BREAK_KEYWORD);
+    expect(TokenType::SEMICOLON);
+    return std::make_unique<BreakStatement>();
+}
+
+std::unique_ptr<Statement> Parser::parseContinue() {
+    expect(TokenType::CONTINUE_KEYWORD);
+    expect(TokenType::SEMICOLON);
+    return std::make_unique<ContinueStatement>();
+}
+
+std::unique_ptr<Statement> Parser::parseWhileStatement() {
+    expect(TokenType::WHILE_KEYWORD);
+    expect(TokenType::OPEN_PAREN);
+    auto condition = parseExp();
+    expect(TokenType::CLOSE_PAREN);
+    auto body = parseStatement();
+    return std::make_unique<WhileStatement>(std::move(condition), std::move(body));
+}
+
+std::unique_ptr<Statement> Parser::parseDoWhileStatement() {
+    expect(TokenType::DO_KEYWORD);
+    auto body = parseStatement();
+    expect(TokenType::WHILE_KEYWORD);
+    expect(TokenType::OPEN_PAREN);
+    auto condition = parseExp();
+    expect(TokenType::CLOSE_PAREN);
+    expect(TokenType::SEMICOLON);
+    return std::make_unique<DoWhileStatement>(std::move(body), std::move(condition));
+}
+
+std::unique_ptr<ForInit> Parser::parseForInit() {
+    if (peekToken().type == TokenType::INT_KEYWORD) {
+        auto decl = parseDeclaration();
+        return std::make_unique<InitDecl>(std::move(decl));
+    }
+    if (peekToken().type == TokenType::SEMICOLON) {
+        takeToken();
+        return std::make_unique<InitExp>(nullptr);
+    }
+    auto expr = parseExp();
+    expect(TokenType::SEMICOLON);
+    return std::make_unique<InitExp>(std::move(expr));
+}
+
+std::unique_ptr<Statement> Parser::parseForStatement() {
+    expect(TokenType::FOR_KEYWORD);
+    expect(TokenType::OPEN_PAREN);
+    auto init = parseForInit();
+    std::unique_ptr<Exp> condition = nullptr;
+    if (peekToken().type != TokenType::SEMICOLON) {
+        condition = parseExp();
+    }
+    expect(TokenType::SEMICOLON);
+    std::unique_ptr<Exp> post = nullptr;
+    if (peekToken().type != TokenType::CLOSE_PAREN) {
+        post = parseExp();
+    }
+    expect(TokenType::CLOSE_PAREN);
+    auto body = parseStatement();
+    return std::make_unique<ForStatement>(
+        std::move(init),
+        std::move(condition),
+        std::move(post),
+        std::move(body));
 }
 
 // Top-level entry for expressions

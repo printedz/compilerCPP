@@ -22,6 +22,12 @@ private:
     std::unique_ptr<Typedef> parseTypedef();
     std::unique_ptr<Statement> parseStatement();
     std::unique_ptr<IfStatement> parseIfStatement();
+    std::unique_ptr<Statement> parseWhileStatement();
+    std::unique_ptr<Statement> parseDoWhileStatement();
+    std::unique_ptr<Statement> parseForStatement();
+    std::unique_ptr<ForInit> parseForInit();
+    std::unique_ptr<Statement> parseBreak();
+    std::unique_ptr<Statement> parseContinue();
     std::unique_ptr<Return> parseReturn();
     std::unique_ptr<Exp> parseExp();
     std::unique_ptr<Exp> parseExpWithPrecedence(int minPrec);

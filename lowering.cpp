@@ -208,10 +208,24 @@ namespace {
         return std::make_unique<IRImm>(0);
     }
 
+    struct LoopLabels {
+        std::string breakLabel;
+        std::string continueLabel;
+    };
+
+    static std::string breakLabelFor(const std::string& loopId) {
+        return "break_" + loopId;
+    }
+
+    static std::string continueLabelFor(const std::string& loopId) {
+        return "continue_" + loopId;
+    }
+
     static void emitStatement(
         const Statement& stmt,
         std::vector<std::unique_ptr<IRInstruction>>& instructions,
-        std::unordered_set<std::string>& pseudos) {
+        std::unordered_set<std::string>& pseudos,
+        std::vector<LoopLabels>& loopStack) {
         if (auto ret = dynamic_cast<const Return*>(&stmt)) {
             auto retVal = emitTacky(*ret->expr, instructions, pseudos);
             instructions.push_back(std::make_unique<IRMov>(std::move(retVal), std::make_unique<IRReg>(IRRegister::AX)));
@@ -231,15 +245,113 @@ namespace {
             instructions.push_back(std::make_unique<IRCmp>(std::make_unique<IRImm>(0), std::move(cmpDst)));
             instructions.push_back(std::make_unique<IRJumpCC>(IRCondCode::E, elseLabel));
 
-            emitStatement(*ifStmt->thenStmt, instructions, pseudos);
+            emitStatement(*ifStmt->thenStmt, instructions, pseudos, loopStack);
             if (ifStmt->elseStmt) {
                 instructions.push_back(std::make_unique<IRJump>(endLabel));
                 instructions.push_back(std::make_unique<IRLabel>(elseLabel));
-                emitStatement(*ifStmt->elseStmt, instructions, pseudos);
+                emitStatement(*ifStmt->elseStmt, instructions, pseudos, loopStack);
                 instructions.push_back(std::make_unique<IRLabel>(endLabel));
             } else {
                 instructions.push_back(std::make_unique<IRLabel>(elseLabel));
             }
+            return;
+        }
+        if (auto* br = dynamic_cast<const BreakStatement*>(&stmt)) {
+            if (br->label.empty()) {
+                throw std::runtime_error("Lowering error: break missing loop label");
+            }
+            instructions.push_back(std::make_unique<IRJump>(breakLabelFor(br->label)));
+            return;
+        }
+        if (auto* cont = dynamic_cast<const ContinueStatement*>(&stmt)) {
+            if (cont->label.empty()) {
+                throw std::runtime_error("Lowering error: continue missing loop label");
+            }
+            instructions.push_back(std::make_unique<IRJump>(continueLabelFor(cont->label)));
+            return;
+        }
+        if (auto* whileStmt = dynamic_cast<const WhileStatement*>(&stmt)) {
+            if (whileStmt->label.empty()) {
+                throw std::runtime_error("Lowering error: while missing loop label");
+            }
+            std::string condLabel = continueLabelFor(whileStmt->label);
+            std::string breakLabel = breakLabelFor(whileStmt->label);
+
+            instructions.push_back(std::make_unique<IRLabel>(condLabel));
+            auto condVal = emitTacky(*whileStmt->condition, instructions, pseudos);
+            auto cmpDst = ensureCmpDst(std::move(condVal), instructions, pseudos);
+            instructions.push_back(std::make_unique<IRCmp>(std::make_unique<IRImm>(0), std::move(cmpDst)));
+            instructions.push_back(std::make_unique<IRJumpCC>(IRCondCode::E, breakLabel));
+
+            loopStack.push_back({breakLabel, condLabel});
+            emitStatement(*whileStmt->body, instructions, pseudos, loopStack);
+            loopStack.pop_back();
+
+            instructions.push_back(std::make_unique<IRJump>(condLabel));
+            instructions.push_back(std::make_unique<IRLabel>(breakLabel));
+            return;
+        }
+        if (auto* doWhile = dynamic_cast<const DoWhileStatement*>(&stmt)) {
+            if (doWhile->label.empty()) {
+                throw std::runtime_error("Lowering error: do-while missing loop label");
+            }
+            std::string bodyLabel = freshLabelName();
+            std::string continueLabel = continueLabelFor(doWhile->label);
+            std::string breakLabel = breakLabelFor(doWhile->label);
+
+            instructions.push_back(std::make_unique<IRLabel>(bodyLabel));
+            loopStack.push_back({breakLabel, continueLabel});
+            emitStatement(*doWhile->body, instructions, pseudos, loopStack);
+            loopStack.pop_back();
+
+            instructions.push_back(std::make_unique<IRLabel>(continueLabel));
+            auto condVal = emitTacky(*doWhile->condition, instructions, pseudos);
+            auto cmpDst = ensureCmpDst(std::move(condVal), instructions, pseudos);
+            instructions.push_back(std::make_unique<IRCmp>(std::make_unique<IRImm>(0), std::move(cmpDst)));
+            instructions.push_back(std::make_unique<IRJumpCC>(IRCondCode::NE, bodyLabel));
+            instructions.push_back(std::make_unique<IRLabel>(breakLabel));
+            return;
+        }
+        if (auto* forStmt = dynamic_cast<const ForStatement*>(&stmt)) {
+            if (forStmt->label.empty()) {
+                throw std::runtime_error("Lowering error: for missing loop label");
+            }
+            std::string condLabel = "cond_" + forStmt->label;
+            std::string continueLabel = continueLabelFor(forStmt->label);
+            std::string breakLabel = breakLabelFor(forStmt->label);
+
+            if (auto* initDecl = dynamic_cast<const InitDecl*>(forStmt->init.get())) {
+                if (initDecl->decl->init) {
+                    auto initVal = emitTacky(*initDecl->decl->init, instructions, pseudos);
+                    pseudos.insert(initDecl->decl->name);
+                    instructions.push_back(std::make_unique<IRMov>(
+                        std::move(initVal),
+                        std::make_unique<IRPseudo>(initDecl->decl->name)));
+                }
+            } else if (auto* initExpr = dynamic_cast<const InitExp*>(forStmt->init.get())) {
+                if (initExpr->expr) {
+                    (void)emitTacky(*initExpr->expr, instructions, pseudos);
+                }
+            }
+
+            instructions.push_back(std::make_unique<IRLabel>(condLabel));
+            if (forStmt->condition) {
+                auto condVal = emitTacky(*forStmt->condition, instructions, pseudos);
+                auto cmpDst = ensureCmpDst(std::move(condVal), instructions, pseudos);
+                instructions.push_back(std::make_unique<IRCmp>(std::make_unique<IRImm>(0), std::move(cmpDst)));
+                instructions.push_back(std::make_unique<IRJumpCC>(IRCondCode::E, breakLabel));
+            }
+
+            loopStack.push_back({breakLabel, continueLabel});
+            emitStatement(*forStmt->body, instructions, pseudos, loopStack);
+            loopStack.pop_back();
+
+            instructions.push_back(std::make_unique<IRLabel>(continueLabel));
+            if (forStmt->post) {
+                (void)emitTacky(*forStmt->post, instructions, pseudos);
+            }
+            instructions.push_back(std::make_unique<IRJump>(condLabel));
+            instructions.push_back(std::make_unique<IRLabel>(breakLabel));
             return;
         }
         if (dynamic_cast<const EmptyStatement*>(&stmt)) {
@@ -261,7 +373,7 @@ namespace {
                     continue;
                 }
                 if (auto innerStmt = dynamic_cast<const Statement*>(item.get())) {
-                    emitStatement(*innerStmt, instructions, pseudos);
+                    emitStatement(*innerStmt, instructions, pseudos, loopStack);
                     continue;
                 }
                 throw std::runtime_error("Lowering error: unsupported block item");
@@ -275,6 +387,7 @@ std::unique_ptr<IRProgram> Lowering::toIR(const Program& program) {
     const Function& func = *program.function;
     std::vector<std::unique_ptr<IRInstruction>> body;
     std::unordered_set<std::string> pseudos;
+    std::vector<LoopLabels> loopStack;
     bool sawReturn = false;
     for (const auto& item : func.body->items) {
         if (sawReturn) {
@@ -294,7 +407,7 @@ std::unique_ptr<IRProgram> Lowering::toIR(const Program& program) {
             continue;
         }
         if (auto stmt = dynamic_cast<const Statement*>(item.get())) {
-            emitStatement(*stmt, body, pseudos);
+            emitStatement(*stmt, body, pseudos, loopStack);
             if (dynamic_cast<const Return*>(stmt) != nullptr) {
                 sawReturn = true;
             }

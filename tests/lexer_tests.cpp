@@ -61,3 +61,58 @@ TEST(LexerTests, SkipsCommentsAndWhitespace) {
     ASSERT_EQ(tokens.size(), expected.size());
     EXPECT_EQ(tokens[7].value, "7");
 }
+
+TEST(LexerTests, TokenizesLoopKeywords) {
+    const std::string source = R"(
+        int main(void) {
+            do { continue; } while (cond);
+            for (i = 0; i < 3; i = i + 1) { break; }
+        }
+    )";
+
+    auto tokens = Lexer::tokenize(source);
+
+    std::vector<TokenType> expected = {
+        TokenType::INT_KEYWORD,
+        TokenType::IDENTIFIER,
+        TokenType::OPEN_PAREN,
+        TokenType::VOID_KEYWORD,
+        TokenType::CLOSE_PAREN,
+        TokenType::OPEN_BRACE,
+
+        TokenType::DO_KEYWORD,
+        TokenType::OPEN_BRACE,
+        TokenType::CONTINUE_KEYWORD,
+        TokenType::SEMICOLON,
+        TokenType::CLOSE_BRACE,
+        TokenType::WHILE_KEYWORD,
+        TokenType::OPEN_PAREN,
+        TokenType::IDENTIFIER, // cond
+        TokenType::CLOSE_PAREN,
+        TokenType::SEMICOLON,
+
+        TokenType::FOR_KEYWORD,
+        TokenType::OPEN_PAREN,
+        TokenType::IDENTIFIER, // i
+        TokenType::EQUAL,
+        TokenType::CONSTANT,
+        TokenType::SEMICOLON,
+        TokenType::IDENTIFIER, // i
+        TokenType::LESSTHAN,
+        TokenType::CONSTANT,
+        TokenType::SEMICOLON,
+        TokenType::IDENTIFIER, // i
+        TokenType::EQUAL,
+        TokenType::IDENTIFIER, // i
+        TokenType::PLUS,
+        TokenType::CONSTANT,
+        TokenType::CLOSE_PAREN,
+        TokenType::OPEN_BRACE,
+        TokenType::BREAK_KEYWORD,
+        TokenType::SEMICOLON,
+        TokenType::CLOSE_BRACE,
+
+        TokenType::CLOSE_BRACE};
+
+    EXPECT_EQ(typesFrom(tokens), expected);
+}

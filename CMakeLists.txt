@@ -29,7 +29,8 @@ enable_testing()
 
 add_executable(compiler_tests
         tests/lexer_tests.cpp
-        tests/parser_tests.cpp)
+        tests/parser_tests.cpp
+        tests/resolver_tests.cpp)
 target_link_libraries(compiler_tests PRIVATE compiler_lib GTest::gtest_main)
 add_test(NAME compiler_tests COMMAND compiler_tests)
 
