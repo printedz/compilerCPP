@@ -9,6 +9,11 @@ std::unique_ptr<Program> parseProgram(const std::string& source) {
     Parser parser(tokens);
     return parser.parseProgram();
 }
+
+std::unique_ptr<Program> parseAndResolve(const std::string& source) {
+    auto program = parseProgram(source);
+    return Resolver::resolve(*program);
+}
 }
 
 TEST(ResolverTests, AllowsShadowingInNestedBlock) {
@@ -92,4 +97,83 @@ TEST(ResolverTests, RejectsDuplicateDeclarationInSameScope) {
         EXPECT_NE(std::string(err.what()).find("duplicate variable declaration"),
                   std::string::npos);
     }
+}
+
+TEST(ResolverTests, AnnotatesWhileBreakContinueWithSameLoopId) {
+    const std::string source = R"(
+        int main(void) {
+            int x = 1;
+            int y = 0;
+            while (x) {
+                if (y) break;
+                continue;
+            }
+            return 0;
+        }
+    )";
+    auto resolved = parseAndResolve(source);
+    WhileStatement* whileStmt = nullptr;
+    for (const auto& item : resolved->function->body->items) {
+        whileStmt = dynamic_cast<WhileStatement*>(item.get());
+        if (whileStmt) break;
+    }
+    ASSERT_NE(whileStmt, nullptr);
+    ASSERT_FALSE(whileStmt->label.empty());
+
+    auto* compound = dynamic_cast<CompoundStatement*>(whileStmt->body.get());
+    ASSERT_NE(compound, nullptr);
+    auto* ifStmt = dynamic_cast<IfStatement*>(compound->block->items[0].get());
+    ASSERT_NE(ifStmt, nullptr);
+    auto* br = dynamic_cast<BreakStatement*>(ifStmt->thenStmt.get());
+    ASSERT_NE(br, nullptr);
+    auto* cont = dynamic_cast<ContinueStatement*>(compound->block->items[1].get());
+    ASSERT_NE(cont, nullptr);
+
+    EXPECT_EQ(br->label, whileStmt->label);
+    EXPECT_EQ(cont->label, whileStmt->label);
+}
+
+TEST(ResolverTests, AnnotatesNestedLoopsWithDistinctIds) {
+    const std::string source = R"(
+        int main(void) {
+            int c = 1;
+            for (;;){
+                do {
+                    continue;
+                } while (c);
+                break;
+            }
+            return 0;
+        }
+    )";
+    auto resolved = parseAndResolve(source);
+    ForStatement* outerFor = nullptr;
+    for (const auto& item : resolved->function->body->items) {
+        outerFor = dynamic_cast<ForStatement*>(item.get());
+        if (outerFor) break;
+    }
+    ASSERT_NE(outerFor, nullptr);
+    ASSERT_FALSE(outerFor->label.empty());
+
+    auto* outerBody = dynamic_cast<CompoundStatement*>(outerFor->body.get());
+    ASSERT_NE(outerBody, nullptr);
+
+    auto* innerDo = dynamic_cast<DoWhileStatement*>(outerBody->block->items[0].get());
+    ASSERT_NE(innerDo, nullptr);
+    ASSERT_FALSE(innerDo->label.empty());
+
+    ContinueStatement* cont = dynamic_cast<ContinueStatement*>(innerDo->body.get());
+    if (!cont) {
+        if (auto* innerCompound = dynamic_cast<CompoundStatement*>(innerDo->body.get())) {
+            cont = dynamic_cast<ContinueStatement*>(innerCompound->block->items[0].get());
+        }
+    }
+    ASSERT_NE(cont, nullptr);
+
+    auto* outerBreak = dynamic_cast<BreakStatement*>(outerBody->block->items[1].get());
+    ASSERT_NE(outerBreak, nullptr);
+
+    EXPECT_NE(outerFor->label, innerDo->label);
+    EXPECT_EQ(cont->label, innerDo->label);
+    EXPECT_EQ(outerBreak->label, outerFor->label);
 }
